@@ -1,0 +1,113 @@
+.project-type-dropdown {
+  position: relative;
+}
+
+.project-type-dropdown__trigger {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-steel);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-concrete);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-base);
+}
+
+.project-type-dropdown__trigger:hover {
+  border-color: var(--color-blueprint);
+}
+
+.project-type-dropdown__arrow {
+  color: var(--color-steel);
+  font-size: 0.75rem;
+}
+
+.project-type-dropdown__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.project-type-dropdown__panel {
+  position: absolute;
+  top: calc(100% + var(--spacing-xs));
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-steel);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 101;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.project-type-dropdown__search {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-aluminum);
+}
+
+.project-type-dropdown__search input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-steel);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+}
+
+.project-type-dropdown__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm);
+}
+
+.project-type-dropdown__category {
+  margin-bottom: var(--spacing-md);
+}
+
+.project-type-dropdown__category-header {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--color-concrete-lighter);
+  letter-spacing: 0.05em;
+}
+
+.project-type-dropdown__item {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-concrete);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.project-type-dropdown__item:hover {
+  background: var(--color-aluminum);
+}
+
+.project-type-dropdown__item--selected {
+  background: rgba(27, 73, 101, 0.1);
+  color: var(--color-blueprint);
+  font-weight: 500;
+}
+
+
+

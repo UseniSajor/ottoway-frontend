@@ -1,0 +1,161 @@
+.escrow-page__funding-section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.escrow-page__funding-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-page__tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+
+.escrow-page__tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+}
+
+.escrow-page__tab:hover {
+  color: #0066cc;
+}
+
+.escrow-page__tab.active {
+  color: #0066cc;
+  border-bottom-color: #0066cc;
+}
+
+.escrow-page__content {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.escrow-page__overview {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.escrow-page__info-section {
+  padding-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.escrow-page__info-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.escrow-page__info-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-page__info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.escrow-page__info-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.escrow-page__info-grid label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.escrow-page__info-grid > div > div {
+  font-size: 14px;
+  color: #333;
+}
+
+.escrow-page__status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.escrow-page__status--draft {
+  background: #999;
+}
+
+.escrow-page__status--pending_funding {
+  background: #ff9800;
+}
+
+.escrow-page__status--funded {
+  background: #4caf50;
+}
+
+.escrow-page__status--active {
+  background: #0066cc;
+}
+
+.escrow-page__status--completed {
+  background: #4caf50;
+}
+
+.escrow-page__status--cancelled {
+  background: #f44336;
+}
+
+.escrow-page__status--disputed {
+  background: #f44336;
+}
+
+.escrow-page__amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-page__balance {
+  font-size: 20px;
+  font-weight: 700;
+  color: #4caf50;
+}
+
+.escrow-page__hint {
+  color: #666;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .escrow-page__info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

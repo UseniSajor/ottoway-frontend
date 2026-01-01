@@ -1,0 +1,47 @@
+.design-page__workflow {
+  margin: 24px 0;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.design-page__layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.design-page__sidebar {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.design-page__main {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.design-page__empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+}
+
+@media (max-width: 1024px) {
+  .design-page__layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .design-page__sidebar {
+    position: static;
+  }
+}

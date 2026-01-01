@@ -1,0 +1,362 @@
+# MASTER DEV SPEC — DESKTOP WEB APP + INTERNAL ML / AUTOMATION
+**Version: v2.1 (Authoritative)**
+**Status: DO NOT DEVIATE**
+
+This document is the single source of truth for building the platform.  
+If any implementation detail is ambiguous, assume the most conservative interpretation that preserves safety, auditability, and spec completeness.
+
+---
+
+## 0) PRODUCT GOAL & NON-NEGOTIABLES
+
+### Product Goal
+A **property-owner-first construction platform** that safely moves projects through:
+
+**Planning → Design → Readiness → (Contract) → Permit Submission → Escrow-Funded Build → Closeout**
+
+The platform supports:
+- Property Owners (homeowners, business owners, asset managers, developers)
+- Project Managers
+- Prime Contractors (GCs / Builders)
+- Admin / Platform Operations
+- Internal ML & Automation (guardrailed, explainable)
+
+---
+
+### Non-Negotiables (Server-Enforced)
+- Approved contractors only (invite → compliance → admin approval gate)
+- Contractors may join **only via invite link**
+- Readiness may begin **without a contract**
+- **Permit submission is blocked until**:
+  - ContractAgreement = **FullySigned**
+  - DesignVersion = **ApprovedForPermit**
+  - Required readiness items are complete
+- Escrow releases require **verification + human approval**
+- Reviews are **locked until completion + final payment**
+- Subcontractor management:
+  - Prime contractors only
+  - Visible **only for MAJOR complexity projects**
+- ML / automation may **never auto-execute**:
+  - Permit submissions
+  - Fund releases
+  - Contract signatures
+  - Dispute resolution
+
+---
+
+## 1) TECH STACK & ARCHITECTURE
+
+### Backend
+- Node.js + Express + TypeScript
+- PostgreSQL + Prisma ORM
+
+### Frontend
+- React + TypeScript
+- Desktop-first UI
+- Routing and RBAC enforced via App.tsx
+
+### Payments
+- Stripe Connect (escrow + milestone releases)
+
+### AI / ML
+- Anthropic (Claude Sonnet 4)
+- Rules + scoring first, trained models later
+
+### Storage
+- Local (dev) or S3-compatible (prod)
+
+---
+
+### Internal ML Layer (Required)
+- Immutable event log: `project_events`
+- Optional queue: BullMQ / Redis
+- Feature store: `ml_features_*`
+- Model scoring tables
+- Recommendation + feedback loop
+
+---
+
+## 2) ROLES, PORTALS & RBAC
+
+### Roles (RBAC)
+
+#### Property Owners
+- HOMEOWNER
+- PROJECT_OWNER
+- BUILDING_OWNER
+- BUSINESS_OWNER
+- ASSET_MANAGER
+- PROPERTY_MANAGER
+- REAL_ESTATE_INVESTOR
+- CORPORATE_FACILITIES
+
+#### Project / Delivery
+- DEVELOPER
+- PROJECT_MANAGER
+
+#### Contractors
+- PRIME_CONTRACTOR
+- SUBCONTRACTOR (invited by prime only)
+
+#### Professionals (Optional)
+- DESIGNER / ARCHITECT
+- INSPECTOR
+
+#### Finance
+- LENDER (read-only)
+
+#### Platform
+- ADMIN
+- PLATFORM_OPERATOR
+
+---
+
+### Portals (Must Exist)
+- Property Owner Portal
+- PM Portal
+- Contractor Portal (Prime + Sub workspace)
+- Admin Portal
+- Financing Portal (limited / read-only)
+- Internal Ops + ML Portal (Admin only)
+
+---
+
+## 3) ROUTING (CANONICAL)
+
+All routing must follow this structure:
+
+- `/login`, `/register`
+- `/owner/*`
+- `/pm/*`
+- `/contractor/*`
+- `/admin/*`
+- `/ml/*`
+
+Rules:
+- Unauthenticated users → `/login`
+- Role mismatch → redirect to correct portal
+- ML portal accessible **only** to ADMIN / PLATFORM_OPERATOR
+
+---
+
+## 4) DOMAIN MODEL (REQUIRED ENTITIES)
+
+### Core
+- User (expanded profile fields)
+- Organization
+- ProjectMembership
+
+### Property (NEW — REQUIRED)
+- id, owner_id
+- property_type
+- address fields
+- square_footage
+- unit_count
+- year_built
+- building_class (A / B / C)
+- occupancy
+- lease_type
+
+---
+
+### Project (EXTENDED)
+- category:
+  - RESIDENTIAL
+  - COMMERCIAL
+  - INDUSTRIAL
+  - INSTITUTIONAL
+  - MIXED_USE
+- project_type (see §5)
+- complexity:
+  - SIMPLE
+  - MODERATE
+  - COMPLEX
+  - MAJOR
+- property_id (FK)
+- square_footage
+- unit_count
+- jurisdiction fields
+
+---
+
+### Existing Required Entities (UNCHANGED)
+- DesignVersion
+- ReadinessChecklist
+- ReadinessItem
+- ContractAgreement
+- Signatures
+- PermitSet
+- EscrowAgreement
+- EscrowTransactions
+- StripeConnectAccount
+- Milestone
+- VerificationItem
+- Receipt
+- OCRResult
+- ReceiptVerificationLog
+- ChangeOrder
+- Dispute
+- AuditLog
+- Notifications
+
+---
+
+## 5) PROJECT TYPES (REQUIRED — EXACT ENUMS)
+
+### Residential (8)
+- NEW_CONSTRUCTION_RESIDENTIAL
+- WHOLE_HOUSE_RENOVATION
+- ADDITION_EXPANSION
+- INTERIOR_RENOVATION_LIGHT
+- INTERIOR_RENOVATION_MAJOR
+- KITCHEN_BATH_REMODEL
+- BASEMENT_FINISH
+- ACCESSIBILITY_MODIFICATIONS
+
+### Commercial (6)
+- NEW_CONSTRUCTION_COMMERCIAL
+- TENANT_IMPROVEMENT_OFFICE
+- TENANT_IMPROVEMENT_RETAIL
+- TENANT_IMPROVEMENT_RESTAURANT
+- COMMERCIAL_RENOVATION
+- STOREFRONT_FACADE
+
+### Industrial (3)
+- WAREHOUSE_BUILDOUT
+- MANUFACTURING_FACILITY
+- INDUSTRIAL_RENOVATION
+
+### Institutional (3)
+- SCHOOL_FACILITY
+- HEALTHCARE_FACILITY
+- GOVERNMENT_BUILDING
+
+### Mixed-Use (1)
+- MIXED_USE_DEVELOPMENT
+
+---
+
+## 6) WORKFLOW RULES (SERVER-SIDE)
+
+- Project **must select a project_type**
+- Complexity is auto-suggested (override allowed)
+- Project type drives:
+  - Readiness checklist
+  - Permit requirements
+  - Milestones
+  - Risk models
+- Subcontractor UI appears **only if complexity = MAJOR**
+- All automation actions:
+  - Logged
+  - Auditable
+  - Human-confirmed if sensitive
+
+---
+
+## 7) INTERNAL ML / AUTOMATION (GUARDED)
+
+### ML Capabilities
+- Project type classification
+- Complexity assessment
+- Next Best Action engine
+- Permit risk prediction
+- Schedule slip prediction
+- Cost overrun likelihood
+- Dispute risk prediction
+- Contractor quality scoring (internal only)
+
+### ML Entities
+- ProjectEvent
+- AutomationRule
+- AutomationAction
+- MLFeatureSnapshot
+- ModelScore
+- Recommendation
+- FeedbackLabel
+
+### Guardrails
+- ML outputs = **suggestions only**
+- Human confirmation required for:
+  - Money
+  - Permits
+  - Signatures
+  - Disputes
+
+---
+
+## 8) API ENDPOINT CHECKLIST (MINIMUM)
+
+### Properties
+- GET `/api/properties`
+- POST `/api/properties`
+- GET `/api/properties/:id`
+- PUT `/api/properties/:id`
+- GET `/api/properties/:id/projects`
+
+### Project Types
+- GET `/api/project-types`
+- POST `/api/projects/classify-type`
+- POST `/api/projects/assess-complexity`
+
+### ML / Automation
+- POST `/api/events`
+- GET `/api/projects/:id/events`
+- GET `/api/projects/:id/recommendations`
+- POST `/api/recommendations/:id/accept`
+- POST `/api/recommendations/:id/label`
+- GET `/api/projects/:id/scores`
+
+(All original endpoints from the original Dev Spec remain required.)
+
+---
+
+## 9) FRONTEND REQUIREMENTS (DESKTOP)
+
+### Global
+- AppShell (sidebar + topbar)
+- Notifications center
+- Role-aware routing
+- Typed API client
+- Document viewer
+- Timeline / stepper
+
+### Owner Portal
+- Dashboard (Next Steps + Project Type Wizard)
+- Projects
+- Properties / Portfolio
+- Design
+- Readiness
+- Contracts
+- Permits
+- Escrow
+- Closeout
+- Reviews (locked)
+
+### PM / Contractor / Admin / ML Portals
+- Implement all screens and behaviors defined in this spec
+- ML Portal includes dashboards for:
+  - Events
+  - Recommendations
+  - Scores
+  - Risk
+  - Feedback labeling
+
+---
+
+## 10) DEFINITION OF DONE (NON-NEGOTIABLE)
+
+The platform is **NOT DONE** unless:
+
+- All roles exist and route correctly
+- All portals exist
+- All project types exist
+- Complexity logic works
+- Permit blocking enforced server-side
+- Escrow releases verified
+- Subcontractors hidden unless MAJOR
+- ML produces explainable recommendations
+- No restricted automation executes without human confirmation
+
+---
+
+**END OF MASTER SPEC**

@@ -1,0 +1,34 @@
+.reviews-page__team-section {
+  margin-bottom: 32px;
+}
+
+.reviews-page__team-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reviews-page__team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.reviews-page__reviews-section {
+  margin-bottom: 32px;
+}
+
+.reviews-page__reviews-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reviews-page__reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+

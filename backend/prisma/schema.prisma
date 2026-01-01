@@ -1,0 +1,1388 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
+
+model User {
+  id          String  @id @default(uuid())
+  email       String  @unique
+  password    String  @map("passwordHash") // Database column is passwordHash
+  firstName   String
+  lastName    String
+  name        String? // Computed field for backward compatibility
+  phone       String?
+
+  role UserRole
+
+  // Contractor-specific
+  approvalStatus      ApprovalStatus? @default(PENDING)
+  approvedAt          DateTime?
+  approvedById        String?
+  approvedBy          User?           @relation("ApprovedContractors", fields: [approvedById], references: [id])
+  approvedContractors User[]          @relation("ApprovedContractors")
+  rejectedAt          DateTime?
+  rejectionReason     String?
+
+  licenseNumber       String?
+  licenseExpiration   DateTime?
+  insuranceProvider   String?
+  insuranceExpiration DateTime?
+  complianceDocuments ComplianceDocument[]
+  verifiedDocs        ComplianceDocument[] @relation("VerifiedDocs")
+
+  ownedProjects      Project[]           @relation("ProjectOwner")
+  projectMemberships ProjectMembership[]
+  properties         Property[]
+
+  contractsAsOwner      ContractAgreement[] @relation("ContractOwner")
+  contractsAsContractor ContractAgreement[] @relation("ContractContractor")
+  signatures            ContractSignature[]
+  releasedMilestones    Milestone[]
+  verifiedItems         VerificationItem[]
+
+  uploadedDesigns DesignVersion[]
+  approvedDesigns DesignVersion[]  @relation("ApprovedDesigns")
+  designDocuments DesignDocument[]
+  designComments  DesignComment[]
+
+  assignedReadinessItems  ReadinessItem[]     @relation("AssignedReadinessItems")
+  completedReadinessItems ReadinessItem[]     @relation("CompletedReadinessItems")
+  readinessDocuments      ReadinessDocument[]
+  readinessComments       ReadinessComment[]
+
+  submittedPermits    PermitSet[]
+  permitDocuments     PermitDocument[]
+  validatedPermitDocs PermitDocument[] @relation("ValidatedPermitDocs")
+
+  escrowAgreementsAsPayer EscrowAgreement[]        @relation("EscrowPayer")
+  escrowAgreementsAsPayee EscrowAgreement[]        @relation("EscrowPayee")
+  
+  generatedEstimates  ProjectEstimate[] @relation("GeneratedEstimates")
+  approvedEstimates   ProjectEstimate[] @relation("ApprovedEstimates")
+  stripeConnectAccount    StripeConnectAccount?
+  requestedReleases       EscrowTransaction[]      @relation("RequestedReleases")
+  approvedReleases        EscrowTransaction[]      @relation("ApprovedReleases")
+  rejectedReleases        EscrowTransaction[]      @relation("RejectedReleases")
+  uploadedReceipts        Receipt[]                @relation("UploadedReceipts")
+  verifiedReceipts        Receipt[]                @relation("VerifiedReceipts")
+  verificationLogs        ReceiptVerificationLog[]
+
+  completedCloseouts ProjectCloseout[]
+  closeoutDocuments  CloseoutDocument[]
+  assignedPunchItems PunchListItem[]    @relation("AssignedPunchItems")
+  resolvedPunchItems PunchListItem[]    @relation("ResolvedPunchItems")
+  reportedPunchItems PunchListItem[]    @relation("ReportedPunchItems")
+  punchListImages    PunchListImage[]
+
+  writtenReviews  ProjectReview[]
+  receivedReviews ProjectReview[]  @relation("ReviewSubject")
+  reviewResponses ReviewResponse[]
+
+  sentInvites     SubcontractorInvite[] @relation("InviteSender")
+  acceptedInvites SubcontractorInvite[] @relation("AcceptedInvites")
+
+  projectEvents             ProjectEvent[]
+  approvedAutomationActions AutomationAction[]
+  viewedRecommendations     Recommendation[]   @relation("ViewedRecommendations")
+  acceptedRecommendations   Recommendation[]   @relation("AcceptedRecommendations")
+  rejectedRecommendations   Recommendation[]   @relation("RejectedRecommendations")
+  dismissedRecommendations  Recommendation[]   @relation("DismissedRecommendations")
+  feedbackLabels            FeedbackLabel[]
+
+  filedDisputes    Dispute[]         @relation("FiledDisputes")
+  disputesAgainst  Dispute[]         @relation("DisputesAgainst")
+  resolvedDisputes Dispute[]         @relation("ResolvedDisputes")
+  disputeEvidence  DisputeEvidence[]
+
+  auditLogs     AuditLog[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  HOMEOWNER
+  PROJECT_OWNER
+  BUILDING_OWNER
+  BUSINESS_OWNER
+  ASSET_MANAGER
+  PROPERTY_MANAGER
+  REAL_ESTATE_INVESTOR
+  CORPORATE_FACILITIES
+  DEVELOPER
+  PROJECT_MANAGER
+  PRIME_CONTRACTOR
+  SUBCONTRACTOR
+  DESIGNER
+  ARCHITECT
+  INSPECTOR
+  LENDER
+  ADMIN
+  PLATFORM_OPERATOR
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+model ComplianceDocument {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentType   String
+  fileName       String
+  fileUrl        String
+  expirationDate DateTime?
+  verified       Boolean   @default(false)
+  verifiedById   String?
+  verifiedBy     User?     @relation("VerifiedDocs", fields: [verifiedById], references: [id])
+  verifiedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model ProjectMembership {
+  id          String   @id @default(uuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String
+  permissions String[]
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+model Property {
+  id            String         @id @default(uuid())
+  ownerId       String
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  propertyType  PropertyType
+  streetAddress String
+  city          String
+  state         String
+  zipCode       String
+  county        String?
+  squareFootage Int?
+  unitCount     Int?
+  yearBuilt     Int?
+  buildingClass BuildingClass?
+  occupancy     OccupancyType?
+  leaseType     LeaseType?
+  projects      Project[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([ownerId])
+}
+
+enum PropertyType {
+  SINGLE_FAMILY
+  MULTI_FAMILY
+  CONDO
+  TOWNHOUSE
+  COMMERCIAL_OFFICE
+  RETAIL
+  INDUSTRIAL
+  MIXED_USE
+  LAND
+}
+
+enum BuildingClass {
+  CLASS_A
+  CLASS_B
+  CLASS_C
+}
+
+enum OccupancyType {
+  OWNER_OCCUPIED
+  TENANT_OCCUPIED
+  VACANT
+  MIXED
+}
+
+enum LeaseType {
+  NET_LEASE
+  GROSS_LEASE
+  MODIFIED_GROSS
+  PERCENTAGE_LEASE
+  GROUND_LEASE
+}
+
+model Project {
+  id                   String                @id @default(uuid())
+  name                 String
+  description          String?
+  category             ProjectCategory
+  projectType          ProjectType
+  complexity           ProjectComplexity     @default(MODERATE)
+  ownerId              String
+  owner                User                  @relation("ProjectOwner", fields: [ownerId], references: [id])
+  propertyId           String?
+  property             Property?             @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  squareFootage        Int?
+  unitCount            Int?
+  jurisdiction         String?
+  permitAuthority      String?
+  status               ProjectStatus         @default(PLANNING)
+  members              ProjectMembership[]
+  contracts            ContractAgreement[]
+  designVersions       DesignVersion[]
+  readinessChecklist   ReadinessChecklist?
+  permitSets           PermitSet[]
+  escrowAgreement      EscrowAgreement?
+  closeout             ProjectCloseout?
+  punchListItems       PunchListItem[]
+  reviews              ProjectReview[]
+  subcontractorInvites SubcontractorInvite[]
+  events               ProjectEvent[]
+  automationActions    AutomationAction[]
+  featureSnapshots     MLFeatureSnapshot[]
+  modelScores          ModelScore[]
+  recommendations      Recommendation[]
+  estimates            ProjectEstimate[]
+  disputes             Dispute[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([projectType])
+}
+
+enum ProjectCategory {
+  RESIDENTIAL
+  COMMERCIAL
+  INDUSTRIAL
+  INSTITUTIONAL
+  MIXED_USE
+}
+
+enum ProjectType {
+  NEW_CONSTRUCTION_RESIDENTIAL
+  WHOLE_HOUSE_RENOVATION
+  ADDITION_EXPANSION
+  INTERIOR_RENOVATION_LIGHT
+  INTERIOR_RENOVATION_MAJOR
+  KITCHEN_BATH_REMODEL
+  BASEMENT_FINISH
+  ACCESSIBILITY_MODIFICATIONS
+  NEW_CONSTRUCTION_COMMERCIAL
+  TENANT_IMPROVEMENT_OFFICE
+  TENANT_IMPROVEMENT_RETAIL
+  TENANT_IMPROVEMENT_RESTAURANT
+  COMMERCIAL_RENOVATION
+  STOREFRONT_FACADE
+  WAREHOUSE_BUILDOUT
+  MANUFACTURING_FACILITY
+  INDUSTRIAL_RENOVATION
+  SCHOOL_FACILITY
+  HEALTHCARE_FACILITY
+  GOVERNMENT_BUILDING
+  MIXED_USE_DEVELOPMENT
+}
+
+enum ProjectComplexity {
+  SIMPLE
+  MODERATE
+  COMPLEX
+  MAJOR
+}
+
+enum ProjectStatus {
+  PLANNING
+  DESIGN
+  READINESS
+  CONTRACT_NEGOTIATION
+  PERMIT_SUBMISSION
+  PERMITTED
+  CONSTRUCTION
+  CLOSEOUT
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+model DesignVersion {
+  id            String           @id @default(uuid())
+  projectId     String
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  versionNumber Int
+  versionName   String?
+  description   String?
+  status        DesignStatus     @default(DRAFT)
+  uploadedById  String
+  uploadedBy    User             @relation(fields: [uploadedById], references: [id])
+  approvedById  String?
+  approvedBy    User?            @relation("ApprovedDesigns", fields: [approvedById], references: [id])
+  approvedAt    DateTime?
+  approvalNotes String?
+  documents     DesignDocument[]
+  comments      DesignComment[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@unique([projectId, versionNumber])
+  @@index([projectId, status])
+}
+
+enum DesignStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW_REQUIRED
+  REVISIONS_REQUESTED
+  APPROVED_FOR_PERMIT
+  SUPERSEDED
+}
+
+model DesignDocument {
+  id              String        @id @default(uuid())
+  designVersionId String
+  designVersion   DesignVersion @relation(fields: [designVersionId], references: [id], onDelete: Cascade)
+  fileName        String
+  fileType        String
+  fileSize        Int
+  fileUrl         String
+  documentType    String
+  description     String?
+  uploadedById    String
+  uploadedBy      User          @relation(fields: [uploadedById], references: [id])
+  createdAt       DateTime      @default(now())
+
+  @@index([designVersionId])
+}
+
+model DesignComment {
+  id              String        @id @default(uuid())
+  designVersionId String
+  designVersion   DesignVersion @relation(fields: [designVersionId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  comment         String
+  commentType     String?
+  createdAt       DateTime      @default(now())
+
+  @@index([designVersionId])
+}
+
+model ReadinessChecklist {
+  id                String          @id @default(uuid())
+  projectId         String          @unique
+  project           Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  generatedFromType Boolean         @default(true)
+  items             ReadinessItem[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model ReadinessItem {
+  id              String              @id @default(uuid())
+  checklistId     String
+  checklist       ReadinessChecklist  @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  category        String?
+  required        Boolean             @default(true)
+  orderIndex      Int
+  status          ReadinessItemStatus @default(NOT_STARTED)
+  documents       ReadinessDocument[]
+  assignedToId    String?
+  assignedTo      User?               @relation("AssignedReadinessItems", fields: [assignedToId], references: [id])
+  completedById   String?
+  completedBy     User?               @relation("CompletedReadinessItems", fields: [completedById], references: [id])
+  completedAt     DateTime?
+  completionNotes String?
+  comments        ReadinessComment[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@index([checklistId, status])
+  @@index([assignedToId])
+}
+
+enum ReadinessItemStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  PENDING_REVIEW
+  COMPLETED
+  NOT_APPLICABLE
+}
+
+model ReadinessDocument {
+  id              String        @id @default(uuid())
+  readinessItemId String
+  readinessItem   ReadinessItem @relation(fields: [readinessItemId], references: [id], onDelete: Cascade)
+  fileName        String
+  fileType        String
+  fileSize        Int
+  fileUrl         String
+  description     String?
+  uploadedById    String
+  uploadedBy      User          @relation(fields: [uploadedById], references: [id])
+  createdAt       DateTime      @default(now())
+
+  @@index([readinessItemId])
+}
+
+model ReadinessComment {
+  id              String        @id @default(uuid())
+  readinessItemId String
+  readinessItem   ReadinessItem @relation(fields: [readinessItemId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  comment         String
+  createdAt       DateTime      @default(now())
+
+  @@index([readinessItemId])
+}
+
+model ContractAgreement {
+  id                String              @id @default(uuid())
+  projectId         String
+  project           Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  contractType      ContractType
+  contractName      String
+  description       String?
+  totalValue        Decimal
+  currency          String              @default("USD")
+  ownerId           String
+  owner             User                @relation("ContractOwner", fields: [ownerId], references: [id])
+  contractorId      String
+  contractor        User                @relation("ContractContractor", fields: [contractorId], references: [id])
+  documentUrl       String?
+  documentFileName  String?
+  status            ContractStatus      @default(DRAFT)
+  signatures        ContractSignature[]
+  startDate         DateTime?
+  endDate           DateTime?
+  signedAt          DateTime?
+  paymentTerms      String?
+  deliverables      String?
+  specialConditions String?
+  milestones        Milestone[]
+  escrowAgreements  EscrowAgreement[]
+  disputes          Dispute[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([projectId, status])
+}
+
+enum ContractType {
+  FIXED_PRICE
+  COST_PLUS
+  TIME_AND_MATERIALS
+  DESIGN_BUILD
+  SUBCONTRACT
+  PROFESSIONAL_SERVICES
+}
+
+enum ContractStatus {
+  DRAFT
+  PENDING_REVIEW
+  PENDING_SIGNATURES
+  PARTIALLY_SIGNED
+  FULLY_SIGNED
+  ACTIVE
+  COMPLETED
+  TERMINATED
+  DISPUTED
+}
+
+model ContractSignature {
+  id               String            @id @default(uuid())
+  contractId       String
+  contract         ContractAgreement @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  signerId         String
+  signer           User              @relation(fields: [signerId], references: [id])
+  signerRole       String
+  required         Boolean           @default(true)
+  orderIndex       Int
+  signed           Boolean           @default(false)
+  signedAt         DateTime?
+  signatureData    String?
+  ipAddress        String?
+  userAgent        String?
+  verificationCode String?
+  verified         Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+
+  @@index([contractId, signed])
+}
+
+model Milestone {
+  id                 String              @id @default(uuid())
+  contractId         String
+  contract           ContractAgreement   @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  name               String
+  description        String?
+  orderIndex         Int
+  amount             Decimal
+  percentOfTotal     Decimal?
+  scheduledDate      DateTime?
+  completedDate      DateTime?
+  status             MilestoneStatus     @default(NOT_STARTED)
+  verificationItems  VerificationItem[]
+  releaseRequested   Boolean             @default(false)
+  releaseApproved    Boolean             @default(false)
+  releasedAt         DateTime?
+  releasedById       String?
+  releasedBy         User?               @relation(fields: [releasedById], references: [id])
+  escrowTransactions EscrowTransaction[]
+  disputes           Dispute[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([contractId, status])
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  PENDING_VERIFICATION
+  COMPLETED
+  APPROVED
+  PAID
+}
+
+model VerificationItem {
+  id             String    @id @default(uuid())
+  milestoneId    String
+  milestone      Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  itemType       String
+  description    String
+  required       Boolean   @default(true)
+  verified       Boolean   @default(false)
+  verifiedById   String?
+  verifiedBy     User?     @relation(fields: [verifiedById], references: [id])
+  verifiedAt     DateTime?
+  attachmentUrl  String?
+  attachmentType String?
+  createdAt      DateTime  @default(now())
+
+  @@index([milestoneId, verified])
+}
+
+model PermitSet {
+  id                String       @id @default(uuid())
+  projectId         String
+  project           Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  permitSetName     String
+  description       String?
+  jurisdiction      String
+  permitAuthority   String
+  applicationNumber String?
+  status            PermitStatus @default(PREPARATION)
+  submittedAt       DateTime?
+  submittedById     String?
+  submittedBy       User?        @relation(fields: [submittedById], references: [id])
+  approvedAt        DateTime?
+  expirationDate    DateTime?
+  permits           Permit[]
+  totalFees         Decimal?
+  feesPaid          Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([projectId, status])
+}
+
+enum PermitStatus {
+  PREPARATION
+  READY_TO_SUBMIT
+  SUBMITTED
+  UNDER_REVIEW
+  REVISIONS_REQUIRED
+  APPROVED
+  ISSUED
+  EXPIRED
+  REJECTED
+}
+
+model Permit {
+  id                String           @id @default(uuid())
+  permitSetId       String
+  permitSet         PermitSet        @relation(fields: [permitSetId], references: [id], onDelete: Cascade)
+  permitType        PermitType
+  permitNumber      String?
+  description       String?
+  requiredDocuments String[]
+  documents         PermitDocument[]
+  status            PermitStatus     @default(PREPARATION)
+  applicationFee    Decimal?
+  issuanceFee       Decimal?
+  totalFee          Decimal?
+  appliedDate       DateTime?
+  approvedDate      DateTime?
+  issuedDate        DateTime?
+  expirationDate    DateTime?
+  inspections       Inspection[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([permitSetId, status])
+}
+
+enum PermitType {
+  BUILDING
+  ELECTRICAL
+  PLUMBING
+  MECHANICAL
+  GRADING
+  DEMOLITION
+  STRUCTURAL
+  FIRE
+  SIGN
+  SPECIAL_USE
+  VARIANCE
+  OTHER
+}
+
+model PermitDocument {
+  id            String    @id @default(uuid())
+  permitId      String
+  permit        Permit    @relation(fields: [permitId], references: [id], onDelete: Cascade)
+  documentType  String
+  fileName      String
+  fileType      String
+  fileSize      Int
+  fileUrl       String
+  description   String?
+  uploadedById  String
+  uploadedBy    User      @relation(fields: [uploadedById], references: [id])
+  validated     Boolean   @default(false)
+  validatedById String?
+  validatedBy   User?     @relation("ValidatedPermitDocs", fields: [validatedById], references: [id])
+  validatedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([permitId])
+}
+
+model Inspection {
+  id                   String           @id @default(uuid())
+  permitId             String
+  permit               Permit           @relation(fields: [permitId], references: [id], onDelete: Cascade)
+  inspectionType       String
+  description          String?
+  scheduledDate        DateTime?
+  scheduledTime        String?
+  inspectorName        String?
+  inspectorContact     String?
+  status               InspectionStatus @default(SCHEDULED)
+  completedDate        DateTime?
+  passed               Boolean?
+  notes                String?
+  deficiencies         String[]
+  requiresReinspection Boolean          @default(false)
+  reinspectionOf       String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([permitId, status])
+}
+
+enum InspectionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  PASSED
+  FAILED
+  CANCELLED
+  RESCHEDULED
+}
+
+model EscrowAgreement {
+  id              String                @id @default(uuid())
+  projectId       String                @unique
+  project         Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  stripeAccountId String?
+  stripeAccount   StripeConnectAccount? @relation(fields: [stripeAccountId], references: [id])
+  totalAmount     Decimal
+  currency        String                @default("USD")
+  payerId         String
+  payer           User                  @relation("EscrowPayer", fields: [payerId], references: [id])
+  payeeId         String
+  payee           User                  @relation("EscrowPayee", fields: [payeeId], references: [id])
+  status          EscrowStatus          @default(DRAFT)
+  funded          Boolean               @default(false)
+  fundedAt        DateTime?
+  fundedAmount    Decimal?
+  transactions    EscrowTransaction[]
+  contractId      String?
+  contract        ContractAgreement?    @relation(fields: [contractId], references: [id])
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([projectId])
+}
+
+enum EscrowStatus {
+  DRAFT
+  PENDING_FUNDING
+  FUNDED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+model StripeConnectAccount {
+  id               String            @id @default(uuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id])
+  stripeAccountId  String            @unique
+  accountType      String?
+  country          String?
+  email            String?
+  detailsSubmitted Boolean           @default(false)
+  chargesEnabled   Boolean           @default(false)
+  payoutsEnabled   Boolean           @default(false)
+  requirements     Json?
+  metadata         Json?
+  escrowAgreements EscrowAgreement[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([userId])
+}
+
+model EscrowTransaction {
+  id                   String            @id @default(uuid())
+  escrowAgreementId    String
+  escrowAgreement      EscrowAgreement   @relation(fields: [escrowAgreementId], references: [id], onDelete: Cascade)
+  transactionType      TransactionType
+  amount               Decimal
+  currency             String            @default("USD")
+  milestoneId          String?
+  milestone            Milestone?        @relation(fields: [milestoneId], references: [id])
+  stripePaymentId      String?
+  stripeTransferId     String?
+  status               TransactionStatus @default(PENDING)
+  releaseRequested     Boolean           @default(false)
+  releaseRequestedAt   DateTime?
+  releaseRequestedById String?
+  releaseRequestedBy   User?             @relation("RequestedReleases", fields: [releaseRequestedById], references: [id])
+  verificationComplete Boolean           @default(false)
+  receipts             Receipt[]
+  approvedById         String?
+  approvedBy           User?             @relation("ApprovedReleases", fields: [approvedById], references: [id])
+  approvedAt           DateTime?
+  approvalNotes        String?
+  rejectedById         String?
+  rejectedBy           User?             @relation("RejectedReleases", fields: [rejectedById], references: [id])
+  rejectedAt           DateTime?
+  rejectionReason      String?
+  completedAt          DateTime?
+  description          String?
+  notes                String?
+  disputes             Dispute[]
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([escrowAgreementId, status])
+  @@index([milestoneId])
+}
+
+enum TransactionType {
+  DEPOSIT
+  RELEASE
+  REFUND
+  FEE
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  VERIFICATION_REQUIRED
+  PENDING_APPROVAL
+  APPROVED
+  COMPLETED
+  FAILED
+  REJECTED
+  REFUNDED
+}
+
+model Receipt {
+  id                String            @id @default(uuid())
+  transactionId     String
+  transaction       EscrowTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  fileName          String
+  fileType          String
+  fileSize          Int
+  fileUrl           String
+  vendor            String?
+  receiptDate       DateTime?
+  amount            Decimal?
+  description       String?
+  category          String?
+  ocrProcessed      Boolean           @default(false)
+  ocrResult         OCRResult?
+  verified          Boolean           @default(false)
+  verifiedById      String?
+  verifiedBy        User?             @relation("VerifiedReceipts", fields: [verifiedById], references: [id])
+  verifiedAt        DateTime?
+  verificationNotes String?
+  uploadedById      String
+  uploadedBy        User              @relation("UploadedReceipts", fields: [uploadedById], references: [id])
+  createdAt         DateTime          @default(now())
+
+  @@index([transactionId, verified])
+}
+
+model OCRResult {
+  id              String    @id @default(uuid())
+  receiptId       String    @unique
+  receipt         Receipt   @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  extractedVendor String?
+  extractedDate   DateTime?
+  extractedAmount Decimal?
+  extractedItems  Json?
+  extractedText   String?
+  confidence      Float?
+  rawResponse     Json?
+  processedAt     DateTime  @default(now())
+}
+
+model ReceiptVerificationLog {
+  id           String   @id @default(uuid())
+  receiptId    String
+  verifiedById String
+  verifiedBy   User     @relation(fields: [verifiedById], references: [id])
+  action       String
+  notes        String?
+  previousData Json?
+  newData      Json?
+  createdAt    DateTime @default(now())
+
+  @@index([receiptId])
+}
+
+model ProjectCloseout {
+  id                      String             @id @default(uuid())
+  projectId               String             @unique
+  project                 Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  status                  CloseoutStatus     @default(IN_PROGRESS)
+  punchListComplete       Boolean            @default(false)
+  finalInspectionPassed   Boolean            @default(false)
+  finalPaymentReleased    Boolean            @default(false)
+  warrantyProvided        Boolean            @default(false)
+  asBuiltDrawingsProvided Boolean            @default(false)
+  liensReleased           Boolean            @default(false)
+  documents               CloseoutDocument[]
+  completedAt             DateTime?
+  completedById           String?
+  completedBy             User?              @relation(fields: [completedById], references: [id])
+  warrantyStartDate       DateTime?
+  warrantyEndDate         DateTime?
+  warrantyTerms           String?
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+}
+
+enum CloseoutStatus {
+  IN_PROGRESS
+  PENDING_ITEMS
+  READY_FOR_COMPLETION
+  COMPLETED
+}
+
+model CloseoutDocument {
+  id           String          @id @default(uuid())
+  closeoutId   String
+  closeout     ProjectCloseout @relation(fields: [closeoutId], references: [id], onDelete: Cascade)
+  documentType String
+  fileName     String
+  fileType     String
+  fileSize     Int
+  fileUrl      String
+  description  String?
+  uploadedById String
+  uploadedBy   User            @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime        @default(now())
+
+  @@index([closeoutId])
+}
+
+model PunchListItem {
+  id              String            @id @default(uuid())
+  projectId       String
+  project         Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  location        String?
+  priority        PunchListPriority
+  assignedToId    String?
+  assignedTo      User?             @relation("AssignedPunchItems", fields: [assignedToId], references: [id])
+  status          PunchListStatus   @default(OPEN)
+  images          PunchListImage[]
+  resolvedAt      DateTime?
+  resolvedById    String?
+  resolvedBy      User?             @relation("ResolvedPunchItems", fields: [resolvedById], references: [id])
+  resolutionNotes String?
+  reportedById    String
+  reportedBy      User              @relation("ReportedPunchItems", fields: [reportedById], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([projectId, status])
+}
+
+enum PunchListPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum PunchListStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  VERIFIED
+  CLOSED
+}
+
+model PunchListImage {
+  id           String        @id @default(uuid())
+  punchItemId  String
+  punchItem    PunchListItem @relation(fields: [punchItemId], references: [id], onDelete: Cascade)
+  fileName     String
+  fileUrl      String
+  description  String?
+  uploadedById String
+  uploadedBy   User          @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime      @default(now())
+
+  @@index([punchItemId])
+}
+
+model ProjectReview {
+  id                    String          @id @default(uuid())
+  projectId             String
+  project               Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reviewerId            String
+  reviewer              User            @relation(fields: [reviewerId], references: [id])
+  reviewSubjectId       String
+  reviewSubject         User            @relation("ReviewSubject", fields: [reviewSubjectId], references: [id])
+  subjectRole           String
+  qualityRating         Int?
+  timelinessRating      Int?
+  communicationRating   Int?
+  professionalismRating Int?
+  valueRating           Int?
+  overallRating         Decimal?
+  title                 String?
+  reviewText            String?
+  pros                  String?
+  cons                  String?
+  wouldRecommend        Boolean?
+  wouldHireAgain        Boolean?
+  status                ReviewStatus    @default(DRAFT)
+  publishedAt           DateTime?
+  visible               Boolean         @default(false)
+  response              ReviewResponse?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([projectId])
+  @@index([reviewSubjectId])
+}
+
+enum ReviewStatus {
+  DRAFT
+  SUBMITTED
+  PUBLISHED
+  FLAGGED
+  REMOVED
+}
+
+model ProjectEstimate {
+  id                String          @id @default(uuid())
+  projectId         String
+  project           Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  estimateData      Json
+  
+  source            EstimateSource
+  status            EstimateStatus  @default(DRAFT)
+  
+  generatedById     String
+  generatedBy       User             @relation("GeneratedEstimates", fields: [generatedById], references: [id])
+  
+  approvedById      String?
+  approvedBy        User?            @relation("ApprovedEstimates", fields: [approvedById], references: [id])
+  approvedAt        DateTime?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@index([projectId])
+  @@index([status])
+}
+
+enum EstimateSource {
+  AI_GENERATED
+  CONTRACTOR_PROVIDED
+  MANUAL
+}
+
+enum EstimateStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SUPERSEDED
+}
+
+model ReviewResponse {
+  id            String        @id @default(uuid())
+  reviewId      String        @unique
+  review        ProjectReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  responseText  String
+  respondedById String
+  respondedBy   User          @relation(fields: [respondedById], references: [id])
+  createdAt     DateTime      @default(now())
+}
+
+model SubcontractorInvite {
+  id           String       @id @default(uuid())
+  projectId    String
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedById  String
+  invitedBy    User         @relation("InviteSender", fields: [invitedById], references: [id])
+  email        String
+  trade        String
+  scope        String?
+  token        String       @unique
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  acceptedById String?
+  acceptedBy   User?        @relation("AcceptedInvites", fields: [acceptedById], references: [id])
+  status       InviteStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+
+  @@index([projectId])
+  @@index([email])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+model ProjectEvent {
+  id                String   @id @default(uuid())
+  projectId         String
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  eventType         String
+  eventData         Json
+  userId            String?
+  user              User?    @relation(fields: [userId], references: [id])
+  featuresExtracted Boolean  @default(false)
+  timestamp         DateTime @default(now())
+
+  @@index([projectId, timestamp])
+  @@index([eventType, timestamp])
+}
+
+model AutomationRule {
+  id                    String             @id @default(uuid())
+  name                  String
+  description           String?
+  triggerType           String
+  triggerConditions     Json
+  actions               Json
+  enabled               Boolean            @default(true)
+  requiresHumanApproval Boolean            @default(true)
+  executionLog          AutomationAction[]
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+}
+
+model AutomationAction {
+  id               String                 @id @default(uuid())
+  ruleId           String
+  rule             AutomationRule         @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  projectId        String
+  project          Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actionType       String
+  actionData       Json
+  status           AutomationActionStatus @default(PENDING)
+  requiresApproval Boolean                @default(true)
+  humanApproval    Boolean?
+  approvedBy       User?                  @relation(fields: [approvedById], references: [id])
+  approvedById     String?
+  approvedAt       DateTime?
+  rejectionReason  String?
+  executedAt       DateTime?
+  result           Json?
+  errorMessage     String?
+  createdAt        DateTime               @default(now())
+
+  @@index([ruleId])
+  @@index([projectId])
+  @@index([status, requiresApproval])
+}
+
+enum AutomationActionStatus {
+  PENDING
+  AWAITING_APPROVAL
+  APPROVED
+  EXECUTING
+  EXECUTED
+  FAILED
+  REJECTED
+  CANCELLED
+}
+
+model MLFeatureSnapshot {
+  id                String   @id @default(uuid())
+  projectId         String
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  featureData       Json
+  timelineFeatures  Json?
+  financialFeatures Json?
+  teamFeatures      Json?
+  progressFeatures  Json?
+  riskFeatures      Json?
+  snapshotReason    String?
+  timestamp         DateTime @default(now())
+
+  @@index([projectId, timestamp])
+}
+
+model ModelScore {
+  id                  String           @id @default(uuid())
+  projectId           String
+  project             Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  modelName           String
+  modelVersion        String
+  scoreType           String
+  score               Float
+  confidence          Float
+  explanation         Json
+  contributingFactors Json
+  isHighRisk          Boolean          @default(false)
+  riskLevel           String?
+  recommendations     Recommendation[]
+  timestamp           DateTime         @default(now())
+
+  @@index([projectId, modelName, timestamp])
+  @@index([scoreType, isHighRisk])
+}
+
+model Recommendation {
+  id              String               @id @default(uuid())
+  projectId       String
+  project         Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  modelScoreId    String?
+  modelScore      ModelScore?          @relation(fields: [modelScoreId], references: [id])
+  type            RecommendationType
+  title           String
+  description     String
+  priority        Int
+  reasoning       Json
+  confidence      Float
+  estimatedImpact String?
+  estimatedEffort String?
+  status          RecommendationStatus @default(ACTIVE)
+  viewedAt        DateTime?
+  viewedById      String?
+  viewedBy        User?                @relation("ViewedRecommendations", fields: [viewedById], references: [id])
+  acceptedAt      DateTime?
+  acceptedById    String?
+  acceptedBy      User?                @relation("AcceptedRecommendations", fields: [acceptedById], references: [id])
+  rejectedAt      DateTime?
+  rejectedById    String?
+  rejectedBy      User?                @relation("RejectedRecommendations", fields: [rejectedById], references: [id])
+  dismissedAt     DateTime?
+  dismissedById   String?
+  dismissedBy     User?                @relation("DismissedRecommendations", fields: [dismissedById], references: [id])
+  feedbackLabels  FeedbackLabel[]
+  expiresAt       DateTime?
+  createdAt       DateTime             @default(now())
+
+  @@index([projectId, status])
+  @@index([type, status])
+}
+
+enum RecommendationType {
+  NEXT_ACTION
+  RISK_MITIGATION
+  OPTIMIZATION
+  TIMELINE_ADJUSTMENT
+  BUDGET_ALERT
+  QUALITY_CHECK
+  TEAM_ASSIGNMENT
+  VENDOR_SELECTION
+  PERMIT_PREPARATION
+  PAYMENT_SCHEDULE
+}
+
+enum RecommendationStatus {
+  ACTIVE
+  VIEWED
+  ACCEPTED
+  REJECTED
+  DISMISSED
+  EXPIRED
+  IMPLEMENTED
+}
+
+model FeedbackLabel {
+  id                    String            @id @default(uuid())
+  recommendationId      String
+  recommendation        Recommendation    @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  userId                String
+  user                  User              @relation(fields: [userId], references: [id])
+  label                 FeedbackLabelType
+  comment               String?
+  wasImplemented        Boolean?
+  implementationOutcome String?
+  createdAt             DateTime          @default(now())
+
+  @@index([recommendationId])
+  @@index([userId])
+}
+
+enum FeedbackLabelType {
+  HELPFUL
+  NOT_HELPFUL
+  INCORRECT
+  TOO_EARLY
+  TOO_LATE
+  NOT_APPLICABLE
+  MISLEADING
+  EXCELLENT
+}
+
+model Dispute {
+  id               String             @id @default(uuid())
+  projectId        String
+  project          Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  disputeType      DisputeType
+  title            String
+  description      String
+  filedById        String
+  filedBy          User               @relation("FiledDisputes", fields: [filedById], references: [id])
+  againstId        String
+  against          User               @relation("DisputesAgainst", fields: [againstId], references: [id])
+  contractId       String?
+  contract         ContractAgreement? @relation(fields: [contractId], references: [id])
+  milestoneId      String?
+  milestone        Milestone?         @relation(fields: [milestoneId], references: [id])
+  transactionId    String?
+  transaction      EscrowTransaction? @relation(fields: [transactionId], references: [id])
+  status           DisputeStatus      @default(OPEN)
+  priority         DisputePriority    @default(MEDIUM)
+  evidence         DisputeEvidence[]
+  resolvedAt       DateTime?
+  resolvedById     String?
+  resolvedBy       User?              @relation("ResolvedDisputes", fields: [resolvedById], references: [id])
+  resolutionNotes  String?
+  resolutionAction Json?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([projectId, status])
+}
+
+enum DisputeType {
+  PAYMENT
+  QUALITY_OF_WORK
+  TIMELINE
+  SCOPE_CHANGE
+  CONTRACT_BREACH
+  OTHER
+}
+
+enum DisputeStatus {
+  OPEN
+  IN_REVIEW
+  PENDING_EVIDENCE
+  MEDIATION
+  RESOLVED
+  CLOSED
+  ESCALATED
+}
+
+enum DisputePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model DisputeEvidence {
+  id            String   @id @default(uuid())
+  disputeId     String
+  dispute       Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  submittedById String
+  submittedBy   User     @relation(fields: [submittedById], references: [id])
+  evidenceType  String
+  description   String
+  fileUrl       String?
+  fileName      String?
+  createdAt     DateTime @default(now())
+
+  @@index([disputeId])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  action       String
+  entity       String
+  entityId     String?
+  previousData Json?
+  newData      Json?
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  title      String
+  message    String
+  entityType String?
+  entityId   String?
+  actionUrl  String?
+  priority   String?
+  read       Boolean   @default(false)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, read])
+}

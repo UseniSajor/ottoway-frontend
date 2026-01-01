@@ -1,0 +1,650 @@
+/* Closeout Checklist Header */
+.closeout-checklist-header {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.closeout-checklist-header__status {
+  margin-bottom: 20px;
+}
+
+.closeout-checklist-header__status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.closeout-checklist-header__progress {
+  margin-bottom: 24px;
+}
+
+.closeout-checklist-header__progress-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.closeout-checklist-header__progress-bar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.closeout-checklist-header__progress-fill {
+  height: 100%;
+  background: #4caf50;
+  transition: width 0.3s;
+}
+
+.closeout-checklist-header__checklist h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.closeout-checklist-header__items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.closeout-checklist-header__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.closeout-checklist-header__item:hover {
+  background: #f0f0f0;
+}
+
+.closeout-checklist-header__checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.closeout-checklist-header__item span.checked {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.closeout-checklist-header__actions {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.closeout-checklist-header__complete-button {
+  padding: 12px 24px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.closeout-checklist-header__complete-button:hover {
+  background: #45a049;
+}
+
+.closeout-checklist-header__completed {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f0f9f0;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  color: #4caf50;
+}
+
+/* Punch List Table */
+.punch-list-table__empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.punch-list-table__hint {
+  color: #999;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.punch-list-table__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.punch-list-table__filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.punch-list-table__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Punch Item Card */
+.punch-item-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.punch-item-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.punch-item-card__title-section h4 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.punch-item-card__location {
+  font-size: 13px;
+  color: #666;
+}
+
+.punch-item-card__badges {
+  display: flex;
+  gap: 8px;
+}
+
+.punch-item-card__priority-badge,
+.punch-item-card__status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.punch-item-card__description {
+  margin-bottom: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.punch-item-card__meta {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.punch-item-card__images {
+  margin-bottom: 12px;
+}
+
+.punch-item-card__images-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.punch-item-card__images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.punch-item-card__image-link img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.punch-item-card__resolution {
+  padding: 12px;
+  background: #f0f9f0;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.punch-item-card__resolution-header {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4caf50;
+  margin-bottom: 4px;
+}
+
+.punch-item-card__resolution-notes {
+  font-size: 13px;
+  color: #666;
+}
+
+.punch-item-card__actions {
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.punch-item-card__status-select {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Closeout Document Upload */
+.closeout-document-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.closeout-document-upload__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeout-document-upload__header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.closeout-document-upload__upload-button {
+  padding: 8px 16px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.closeout-document-upload__form {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.closeout-document-upload__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.closeout-document-upload__field label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.closeout-document-upload__field input,
+.closeout-document-upload__field select,
+.closeout-document-upload__field textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.closeout-document-upload__file-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+}
+
+.closeout-document-upload__submit {
+  padding: 10px 20px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.closeout-document-upload__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.closeout-document-upload__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.closeout-document-upload__item-name {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.closeout-document-upload__item-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.closeout-document-upload__item-description {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.closeout-document-upload__download {
+  padding: 6px 12px;
+  background: #0066cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.closeout-document-upload__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.closeout-document-upload__error {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Warranty Info Panel */
+.warranty-info-panel {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.warranty-info-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.warranty-info-panel__header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.warranty-info-panel__edit-button {
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.warranty-info-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.warranty-info-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.warranty-info-panel__field label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.warranty-info-panel__field input,
+.warranty-info-panel__field textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.warranty-info-panel__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.warranty-info-panel__button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.warranty-info-panel__button {
+  background: #0066cc;
+  color: white;
+}
+
+.warranty-info-panel__button--secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.warranty-info-panel__display {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.warranty-info-panel__dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.warranty-info-panel__dates > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warranty-info-panel__dates label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.warranty-info-panel__terms {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.warranty-info-panel__terms label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.warranty-info-panel__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.warranty-info-panel__hint {
+  font-size: 13px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* Closeout Modal */
+.closeout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.closeout-modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.closeout-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.closeout-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.closeout-modal-close {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.closeout-modal-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.closeout-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.closeout-modal-field label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.closeout-modal-field .required {
+  color: #f44336;
+}
+
+.closeout-modal-field input,
+.closeout-modal-field textarea,
+.closeout-modal-field select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.closeout-modal-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.closeout-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.closeout-modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.closeout-modal-button {
+  background: #0066cc;
+  color: white;
+}
+
+.closeout-modal-button--secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.closeout-modal-error {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+

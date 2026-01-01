@@ -1,0 +1,108 @@
+.property-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  height: 100%;
+}
+
+.property-card:hover {
+  border-color: #0066cc;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
+  transform: translateY(-2px);
+}
+
+.property-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.property-card__icon {
+  font-size: 32px;
+}
+
+.property-card__type-badge {
+  background: #f0f7ff;
+  color: #0066cc;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.property-card__body {
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.property-card__address {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.property-card__meta {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.property-card__label {
+  font-weight: 500;
+}
+
+.property-card__details {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.property-card__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.property-card__detail-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.property-card__detail-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+}
+
+.property-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.property-card__project-count {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.property-card__view {
+  font-size: 14px;
+  color: #0066cc;
+  font-weight: 500;
+}
+

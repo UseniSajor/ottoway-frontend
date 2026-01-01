@@ -1,0 +1,1033 @@
+/* Admin Dashboard */
+.admin-dashboard {
+  padding: 24px;
+}
+
+.admin-dashboard__header {
+  margin-bottom: 24px;
+}
+
+.admin-dashboard__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-dashboard__metric-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.admin-dashboard__metric-card--active {
+  border-color: #0066cc;
+}
+
+.admin-dashboard__metric-card--projects {
+  border-color: #4caf50;
+}
+
+.admin-dashboard__metric-card--payment {
+  border-color: #4caf50;
+}
+
+.admin-dashboard__metric-card--alert {
+  border-color: #ff9800;
+}
+
+.admin-dashboard__metric-card--dispute {
+  border-color: #f44336;
+}
+
+.admin-dashboard__metric-label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-dashboard__metric-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.admin-dashboard__content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+}
+
+.admin-dashboard__activity-section,
+.admin-dashboard__alerts-section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.admin-dashboard__activity-section h3,
+.admin-dashboard__alerts-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-dashboard__activity-list,
+.admin-dashboard__alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.admin-dashboard__activity-item {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-dashboard__activity-item:last-child {
+  border-bottom: none;
+}
+
+.admin-dashboard__activity-type {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  min-width: 120px;
+}
+
+.admin-dashboard__activity-description {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+}
+
+.admin-dashboard__activity-time {
+  font-size: 12px;
+  color: #999;
+  min-width: 150px;
+}
+
+.admin-dashboard__alert {
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #ddd;
+}
+
+.admin-dashboard__alert--high,
+.admin-dashboard__alert--critical {
+  border-left-color: #f44336;
+  background: #ffebee;
+}
+
+.admin-dashboard__alert--medium {
+  border-left-color: #ff9800;
+  background: #fff3e0;
+}
+
+.admin-dashboard__alert-type {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.admin-dashboard__alert-message {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.admin-dashboard__alert-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.admin-dashboard__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.admin-dashboard__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* User Management Page */
+.user-management-page {
+  padding: 24px;
+}
+
+.user-management-page__header {
+  margin-bottom: 24px;
+}
+
+.user-management-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.user-management-page__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.user-management-page__search {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.user-management-page__filter {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.user-management-page__table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.user-management-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-management-page__table thead {
+  background: #f5f5f5;
+}
+
+.user-management-page__table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-management-page__table td {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #333;
+}
+
+.user-management-page__table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.user-management-page__status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.user-management-page__status--pending {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.user-management-page__status--approved {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.user-management-page__status--rejected {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.user-management-page__action-button {
+  padding: 6px 12px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.user-management-page__action-button:hover {
+  background: #0052a3;
+}
+
+.user-management-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.user-management-page__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* Contractor Approvals Page */
+.contractor-approvals-page {
+  padding: 24px;
+}
+
+.contractor-approvals-page__header {
+  margin-bottom: 24px;
+}
+
+.contractor-approvals-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.contractor-approvals-page__section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.contractor-approvals-page__section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.contractor-approvals-page__contractor-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 16px;
+}
+
+.contractor-approvals-page__contractor-card {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.contractor-approvals-page__contractor-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.contractor-approvals-page__contractor-info > div {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.contractor-approvals-page__status-approved {
+  color: #4caf50;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.contractor-approvals-page__contractor-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contractor-approvals-page__view-button,
+.contractor-approvals-page__approve-button,
+.contractor-approvals-page__reject-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contractor-approvals-page__view-button {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.contractor-approvals-page__approve-button {
+  background: #4caf50;
+  color: white;
+}
+
+.contractor-approvals-page__reject-button {
+  background: #f44336;
+  color: white;
+}
+
+.contractor-approvals-page__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.contractor-approvals-page__modal {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+}
+
+.contractor-approvals-page__modal h3 {
+  margin: 0 0 16px 0;
+}
+
+.contractor-approvals-page__rejection-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 16px;
+  resize: vertical;
+}
+
+.contractor-approvals-page__modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.contractor-approvals-page__cancel-button,
+.contractor-approvals-page__confirm-reject-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.contractor-approvals-page__cancel-button {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.contractor-approvals-page__confirm-reject-button {
+  background: #f44336;
+  color: white;
+}
+
+.contractor-approvals-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.contractor-approvals-page__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* Admin Projects Page */
+.admin-projects-page {
+  padding: 24px;
+}
+
+.admin-projects-page__header {
+  margin-bottom: 24px;
+}
+
+.admin-projects-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-projects-page__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-projects-page__search {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.admin-projects-page__filter {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.admin-projects-page__table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-projects-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-projects-page__table thead {
+  background: #f5f5f5;
+}
+
+.admin-projects-page__table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-projects-page__table td {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #333;
+}
+
+.admin-projects-page__status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.admin-projects-page__action-button {
+  padding: 6px 12px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.admin-projects-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+/* Escrow Monitoring Page */
+.escrow-monitoring-page {
+  padding: 24px;
+}
+
+.escrow-monitoring-page__header {
+  margin-bottom: 24px;
+}
+
+.escrow-monitoring-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-monitoring-page__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.escrow-monitoring-page__metric-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.escrow-monitoring-page__metric-card--alert {
+  border-color: #ff9800;
+}
+
+.escrow-monitoring-page__metric-label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.escrow-monitoring-page__metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.escrow-monitoring-page__section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.escrow-monitoring-page__section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-monitoring-page__table-container {
+  overflow-x: auto;
+}
+
+.escrow-monitoring-page__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.escrow-monitoring-page__table thead {
+  background: #f5f5f5;
+}
+
+.escrow-monitoring-page__table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.escrow-monitoring-page__table td {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.escrow-monitoring-page__status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.escrow-monitoring-page__action-button {
+  padding: 6px 12px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.escrow-monitoring-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.escrow-monitoring-page__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* Disputes Page */
+.disputes-page {
+  padding: 24px;
+}
+
+.disputes-page__header {
+  margin-bottom: 24px;
+}
+
+.disputes-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.disputes-page__back-button {
+  margin-bottom: 16px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.disputes-page__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.disputes-page__filter {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.disputes-page__disputes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 16px;
+}
+
+.disputes-page__dispute-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.disputes-page__dispute-card:hover {
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+.disputes-page__dispute-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.disputes-page__dispute-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+
+.disputes-page__dispute-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.disputes-page__status,
+.disputes-page__priority {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.disputes-page__status--open {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.disputes-page__status--in_review {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.disputes-page__status--resolved {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.disputes-page__priority--low {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.disputes-page__priority--medium {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.disputes-page__priority--high {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.disputes-page__priority--critical {
+  background: #d32f2f;
+  color: white;
+}
+
+.disputes-page__dispute-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.disputes-page__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.disputes-page__detail-section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.disputes-page__detail-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.disputes-page__detail-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.disputes-page__detail-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.disputes-page__detail-info label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.disputes-page__detail-info > div > div {
+  font-size: 14px;
+  color: #333;
+}
+
+.disputes-page__evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.disputes-page__evidence-item {
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.disputes-page__evidence-item a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.disputes-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.disputes-page__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* Audit Log Page */
+.audit-log-page {
+  padding: 24px;
+}
+
+.audit-log-page__header {
+  margin-bottom: 24px;
+}
+
+.audit-log-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.audit-log-page__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.audit-log-page__filter-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.audit-log-page__filter {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.audit-log-page__table-container {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.audit-log-page__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.audit-log-page__table thead {
+  background: #f5f5f5;
+}
+
+.audit-log-page__table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.audit-log-page__table td {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.audit-log-page__table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.audit-log-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.audit-log-page__loading {
+  padding: 60px;
+  text-align: center;
+  color: #666;
+}
+
+/* Platform Settings Page */
+.platform-settings-page {
+  padding: 24px;
+}
+
+.platform-settings-page__header {
+  margin-bottom: 24px;
+}
+
+.platform-settings-page__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.platform-settings-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.platform-settings-page__section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.platform-settings-page__section h3 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.platform-settings-page__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+@media (max-width: 1024px) {
+  .admin-dashboard__content {
+    grid-template-columns: 1fr;
+  }
+}

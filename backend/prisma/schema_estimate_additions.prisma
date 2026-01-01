@@ -1,0 +1,40 @@
+// Add this model after ProjectReview model (around line 1000)
+
+model ProjectEstimate {
+  id                String          @id @default(uuid())
+  projectId         String
+  project           Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  estimateData      Json
+  
+  source            EstimateSource
+  status            EstimateStatus  @default(DRAFT)
+  
+  generatedById     String
+  generatedBy       User             @relation("GeneratedEstimates", fields: [generatedById], references: [id])
+  
+  approvedById      String?
+  approvedBy     User?            @relation("ApprovedEstimates", fields: [approvedById], references: [id])
+  approvedAt        DateTime?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@index([projectId])
+  @@index([status])
+}
+
+enum EstimateSource {
+  AI_GENERATED
+  CONTRACTOR_PROVIDED
+  MANUAL
+}
+
+enum EstimateStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SUPERSEDED
+}
+

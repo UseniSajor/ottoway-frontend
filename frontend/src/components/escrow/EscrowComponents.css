@@ -1,0 +1,939 @@
+/* Escrow Overview Header */
+.escrow-overview-header {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.escrow-overview-header__main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.escrow-overview-header__status {
+  display: flex;
+  align-items: center;
+}
+
+.escrow-overview-header__status-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.escrow-overview-header__amounts {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.escrow-overview-header__amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.escrow-overview-header__amount-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.escrow-overview-header__amount-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.escrow-overview-header__amount-value--available {
+  color: #4caf50;
+}
+
+.escrow-overview-header__amount-value--pending {
+  color: #ff9800;
+}
+
+/* Stripe Funding Form */
+.stripe-funding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stripe-funding-form__error {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.stripe-funding-form__amount {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.stripe-funding-form__amount-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stripe-funding-form__amount-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.stripe-funding-form__card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stripe-funding-form__card-section label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.stripe-funding-form__card-element {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.stripe-funding-form__submit {
+  padding: 14px 24px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stripe-funding-form__submit:hover:not(:disabled) {
+  background: #0052a3;
+}
+
+.stripe-funding-form__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stripe-funding-form__security {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Milestone Release List */
+.escrow-milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.escrow-milestones-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.escrow-milestones-hint {
+  color: #999;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.escrow-milestones__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.escrow-milestones__header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-milestones__summary {
+  font-size: 14px;
+  color: #666;
+}
+
+.escrow-milestones__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Milestone Release Card */
+.milestone-release-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.milestone-release-card:hover {
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+.milestone-release-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.milestone-release-card__title-section {
+  flex: 1;
+}
+
+.milestone-release-card__title-section h4 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.milestone-release-card__description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.milestone-release-card__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.milestone-release-card__status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.milestone-release-card__amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.milestone-release-card__transaction {
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.milestone-release-card__transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.milestone-release-card__transaction-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.milestone-release-card__transaction-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.milestone-release-card__transaction-meta {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.milestone-release-card__receipts {
+  font-size: 12px;
+  color: #666;
+}
+
+.milestone-release-card__verified {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.milestone-release-card__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.milestone-release-card__action-button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.milestone-release-card__action-button:hover {
+  border-color: #0066cc;
+  color: #0066cc;
+}
+
+.milestone-release-card__action-button--secondary {
+  background: #f5f5f5;
+}
+
+.milestone-release-card__action-button--success {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: white;
+}
+
+.milestone-release-card__action-button--success:hover {
+  background: #45a049;
+}
+
+/* Receipt Verification Panel */
+.receipt-verification-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.receipt-verification-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.receipt-verification-panel__header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.receipt-verification-panel__upload-button {
+  padding: 8px 16px;
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.receipt-verification-panel__upload-button:hover {
+  background: #0052a3;
+}
+
+.receipt-verification-panel__empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.receipt-verification-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.receipt-verification-panel__item {
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.receipt-verification-panel__item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.receipt-verification-panel__item-info {
+  flex: 1;
+}
+
+.receipt-verification-panel__item-name {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.receipt-verification-panel__item-meta {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.receipt-verification-panel__item-vendor,
+.receipt-verification-panel__item-amount {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.receipt-verification-panel__item-status {
+  display: flex;
+  align-items: center;
+}
+
+.receipt-verification-panel__status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.receipt-verification-panel__status-badge--verified {
+  background: #4caf50;
+  color: white;
+}
+
+.receipt-verification-panel__status-badge--pending {
+  background: #ff9800;
+  color: white;
+}
+
+.receipt-verification-panel__ocr {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.receipt-verification-panel__ocr-toggle {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.receipt-verification-panel__ocr-toggle:hover {
+  text-decoration: underline;
+}
+
+.receipt-verification-panel__verification-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 12px;
+  color: #666;
+}
+
+.receipt-verification-panel__verification-notes {
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.receipt-verification-panel__item-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.receipt-verification-panel__action-link {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.receipt-verification-panel__action-link:hover {
+  text-decoration: underline;
+}
+
+.receipt-verification-panel__action-link--success {
+  color: #4caf50;
+}
+
+.receipt-verification-panel__action-link--danger {
+  color: #f44336;
+}
+
+/* OCR Result Display */
+.ocr-result-display {
+  margin-top: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.ocr-result-display h5 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.ocr-result-display__confidence {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.ocr-result-display__data {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ocr-result-display__field {
+  display: flex;
+  gap: 8px;
+}
+
+.ocr-result-display__field label {
+  font-weight: 500;
+  color: #666;
+  min-width: 80px;
+  font-size: 13px;
+}
+
+.ocr-result-display__field > div {
+  flex: 1;
+  font-size: 13px;
+  color: #333;
+}
+
+.ocr-result-display__items {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+.ocr-result-display__text {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.ocr-result-display__note {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  color: #999;
+}
+
+/* Transaction History */
+.transaction-history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-history__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.transaction-history__header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.transaction-history__filters {
+  display: flex;
+  gap: 12px;
+}
+
+.transaction-history__filter {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.transaction-history__empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.transaction-history__table {
+  overflow-x: auto;
+}
+
+.transaction-history__table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-history__table th,
+.transaction-history__table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.transaction-history__table th {
+  background: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transaction-history__table td {
+  font-size: 14px;
+  color: #666;
+}
+
+.transaction-history__type-badge,
+.transaction-history__status-badge {
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.transaction-history__amount {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Escrow Modal */
+.escrow-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.escrow-modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.escrow-modal-content--large {
+  max-width: 900px;
+}
+
+.escrow-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.escrow-modal-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-modal-subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.escrow-modal-close {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.escrow-modal-close:hover {
+  color: #333;
+}
+
+.escrow-modal-body {
+  padding: 24px;
+}
+
+.escrow-modal-section {
+  margin-bottom: 24px;
+}
+
+.escrow-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.escrow-modal-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.escrow-modal-info-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.escrow-modal-info-grid label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.escrow-modal-info-grid > div > div {
+  font-size: 14px;
+  color: #333;
+}
+
+.escrow-modal-amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.escrow-modal-verification-complete {
+  padding: 12px;
+  background: #f0f9f0;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+  color: #4caf50;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.escrow-modal-verification-pending {
+  padding: 12px;
+  background: #fff8e1;
+  border: 1px solid #ff9800;
+  border-radius: 4px;
+  color: #ff9800;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.escrow-modal-field {
+  margin-bottom: 16px;
+}
+
+.escrow-modal-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.escrow-modal-field .required {
+  color: #f44336;
+}
+
+.escrow-modal-field input,
+.escrow-modal-field textarea,
+.escrow-modal-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.escrow-modal-field input:focus,
+.escrow-modal-field textarea:focus,
+.escrow-modal-textarea:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.escrow-modal-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.escrow-modal-file-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.escrow-modal-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+}
+
+.escrow-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.escrow-modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.escrow-modal-button {
+  background: #0066cc;
+  color: white;
+}
+
+.escrow-modal-button:hover:not(:disabled) {
+  background: #0052a3;
+}
+
+.escrow-modal-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.escrow-modal-button--secondary {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.escrow-modal-button--secondary:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.escrow-modal-button--success {
+  background: #4caf50;
+  color: white;
+}
+
+.escrow-modal-button--success:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.escrow-modal-button--danger {
+  background: #f44336;
+  color: white;
+}
+
+.escrow-modal-button--danger:hover:not(:disabled) {
+  background: #d32f2f;
+}
+
+.escrow-modal-error {
+  background: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.escrow-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .escrow-modal-field-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .escrow-overview-header__amounts {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .escrow-overview-header__amount {
+    align-items: flex-start;
+  }
+}
+

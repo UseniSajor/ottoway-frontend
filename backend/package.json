@@ -1,0 +1,53 @@
+{
+  "name": "@kealee/backend",
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "predev": "kill-port 5001 5002 5003 5004 5005 5006 5007 5008 5009 5010 || exit 0",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "seed": "tsx src/seed.ts",
+    "migrate:backward": "tsx src/migrations/backward-compatibility.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "verify": "tsx src/scripts/verifyCompletion.ts",
+    "verify:completion": "tsx src/scripts/verifyCompletion.ts",
+    "verify:node": "node scripts/verify-definition-of-done.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "@types/node-cron": "^3.0.11",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^4.2.1",
+    "stripe": "^14.7.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.19.27",
+    "@types/supertest": "^6.0.2",
+    "axios": "^1.6.2",
+    "jest": "^29.7.0",
+    "kill-port": "^2.0.1",
+    "prisma": "^5.7.1",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
