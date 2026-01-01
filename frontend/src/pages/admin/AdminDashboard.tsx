@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../lib/api';
+import { projectsApi } from '../../lib/api';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
 
   const loadDashboard = async () => {
     try {
-      const projects = await api.projects.list();
+      const projects = await projectsApi.list();
       setStats({
         totalUsers: 0,
         totalProjects: projects.length,
