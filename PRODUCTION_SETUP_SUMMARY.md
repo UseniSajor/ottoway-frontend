@@ -165,3 +165,4 @@ VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...
 **Version:** 2.0.0  
 **Last Updated:** $(Get-Date -Format "yyyy-MM-dd")
 
+

@@ -33,3 +33,4 @@ Write-Host "   - AWS_SECRET_ACCESS_KEY" -ForegroundColor Gray
 Write-Host "   - AWS_S3_BUCKET" -ForegroundColor Gray
 Write-Host "`nSet them with: railway variables set VARIABLE_NAME=value" -ForegroundColor Gray
 
+

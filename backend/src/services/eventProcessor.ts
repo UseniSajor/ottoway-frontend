@@ -57,3 +57,4 @@ function shouldGenerateRecommendation(eventType: string): boolean {
   ].includes(eventType);
 }
 
+

@@ -32,3 +32,4 @@ tsx index.ts
 
 The script uses OpenAI's GPT-4 Turbo model to invent a new holiday and describe its traditions, streaming the response in real-time.
 
+

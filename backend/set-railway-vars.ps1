@@ -142,3 +142,4 @@ if ($redeploy -eq "y" -or $redeploy -eq "Y") {
 Write-Host ""
 Write-Host "✅ Environment variables setup complete!" -ForegroundColor Green
 
+

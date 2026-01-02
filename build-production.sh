@@ -95,3 +95,4 @@ echo "  1. Review and update .env.production files with real values"
 echo "  2. Deploy backend to Railway"
 echo "  3. Deploy frontend to Vercel"
 
+

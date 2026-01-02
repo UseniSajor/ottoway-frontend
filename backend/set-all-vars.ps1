@@ -116,3 +116,4 @@ if ($redeploy -eq "y" -or $redeploy -eq "Y") {
 Write-Host ""
 Write-Host "✅ All environment variables set!" -ForegroundColor Green
 
+

@@ -108,3 +108,4 @@ fi
 echo ""
 echo "✅ Environment variables setup complete!"
 
+

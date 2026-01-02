@@ -95,3 +95,4 @@ Write-Host "  1. Review and update .env.production files with real values" -Fore
 Write-Host "  2. Deploy backend to Railway" -ForegroundColor Yellow
 Write-Host "  3. Deploy frontend to Vercel" -ForegroundColor Yellow
 
+
