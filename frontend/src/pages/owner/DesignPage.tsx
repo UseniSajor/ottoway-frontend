@@ -52,7 +52,11 @@ const DesignPage: React.FC = () => {
   const handleCreateVersion = async (data: { versionName?: string; description?: string }) => {
     if (!projectId) return;
     try {
-      await designVersionsApi.create(projectId, data);
+      // API expects 'name' not 'versionName'
+      await designVersionsApi.create(projectId, {
+        name: data.versionName || 'New Version',
+        description: data.description,
+      });
       setShowCreateModal(false);
       await loadDesignVersions();
     } catch (err: any) {

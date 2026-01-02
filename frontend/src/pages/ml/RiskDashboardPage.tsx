@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectsApi } from '../../lib/api';
+import { mlApi } from '../../lib/api';
 import EmptyState from '../../components/EmptyState';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage from '../../components/ErrorMessage';
@@ -26,10 +26,10 @@ const RiskDashboardPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      // TODO: Load risk scores from API when endpoint is available
-      // For now, using mock data structure
-      const scores = await projectsApi.getScores(selectedProject);
-      // Transform API response to RiskScore format when available
+      // Load risk scores from ML API
+      const scores = await mlApi.scores(selectedProject);
+      // Transform API response to RiskScore format
+      // For now, using mock data structure until API response format is confirmed
       setRisks([
         { type: 'PERMIT', value: 0.75, level: 'HIGH' },
         { type: 'DISPUTE', value: 0.35, level: 'LOW' },

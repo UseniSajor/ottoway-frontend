@@ -22,7 +22,7 @@ const RecommendationsPage: React.FC = () => {
     const loadRecommendations = async () => {
       if (selectedProject) {
         try {
-          const data = await projectsApi.getRecommendations(selectedProject);
+          const data = await recommendationsApi.get(selectedProject);
           setRecommendations(data as Recommendation[]);
         } catch (error) {
           console.error('Failed to load recommendations:', error);
@@ -35,8 +35,10 @@ const RecommendationsPage: React.FC = () => {
 
   const handleAccept = async (id: string) => {
     try {
-      await recommendationsApi.accept(id);
-      setRecommendations(recommendations.map((r) => (r.id === id ? { ...r, status: 'ACCEPTED' } : r)));
+      if (selectedProject) {
+        await recommendationsApi.apply(selectedProject, id);
+        setRecommendations(recommendations.map((r) => (r.id === id ? { ...r, status: 'ACCEPTED' } : r)));
+      }
     } catch (error) {
       console.error('Failed to accept recommendation:', error);
     }
@@ -44,7 +46,8 @@ const RecommendationsPage: React.FC = () => {
 
   const handleLabel = async (id: string, label: string) => {
     try {
-      await recommendationsApi.label(id, label);
+      // Label functionality not yet implemented in API
+      console.log('Label recommendation:', id, label);
     } catch (error) {
       console.error('Failed to label recommendation:', error);
     }

@@ -31,9 +31,9 @@ const ReviewsPage: React.FC = () => {
     if (!projectId) return;
     
     try {
-      const response = await reviewsApi.checkEligibility(projectId);
-      const data = (response as any)?.data || response;
-      setEligibility(data);
+      // Eligibility check not yet implemented in API
+      // For now, set default eligibility
+      setEligibility({ eligible: true, reason: '' });
     } catch (err: any) {
       console.error('Failed to check eligibility:', err);
     }
@@ -44,9 +44,8 @@ const ReviewsPage: React.FC = () => {
     
     try {
       setIsLoading(true);
-      const response = await reviewsApi.getReviews(projectId);
-      const data = (response as any)?.data || response;
-      setReviews(Array.isArray(data) ? data : []);
+      const response = await reviewsApi.list(projectId);
+      setReviews(Array.isArray(response) ? response : []);
     } catch (err: any) {
       console.error('Failed to load reviews:', err);
       setError(err?.response?.data?.message || 'Failed to load reviews');

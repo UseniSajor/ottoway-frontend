@@ -49,9 +49,10 @@ const CloseoutPage: React.FC = () => {
     if (!projectId) return;
     
     try {
-      const response = await closeoutApi.getPunchList(projectId);
-      const data = (response as any)?.data || response;
-      setPunchList(Array.isArray(data) ? data : []);
+      const closeout = await closeoutApi.getCloseout(projectId);
+      const closeoutData = closeout as any;
+      // Punch list is part of closeout data
+      setPunchList(Array.isArray(closeoutData?.punchList) ? closeoutData.punchList : []);
     } catch (err: any) {
       console.error('Failed to load punch list:', err);
     }
