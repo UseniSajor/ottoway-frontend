@@ -103,11 +103,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     lastName: string;
     role: string;
   }) => {
-    const response = await authApi.register(data);
-    const { user: userData, token: newToken } = response as { user: User; token: string };
-    setUser(userData);
-    setToken(newToken);
-    localStorage.setItem('token', newToken);
+    try {
+      const response = await authApi.register(data);
+      const { user: userData, token: newToken } = response as { user: User; token: string };
+      setUser(userData);
+      setToken(newToken);
+      localStorage.setItem('token', newToken);
+    } catch (error: any) {
+      console.error('Registration error details:', {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+        isNetworkError: error?.isNetworkError,
+        isConfigError: error?.isConfigError,
+        originalError: error?.originalError,
+      });
+
+      // Extract error message with priority: config error > network error > server message > generic
+      let errorMessage = 'Registration failed';
+      
+      if (error?.isConfigError) {
+        errorMessage = error.message || 'API not reachable—check VITE_API_URL. Cannot connect to localhost in production.';
+      } else if (error?.isNetworkError) {
+        errorMessage = error.message || 'API not reachable—check VITE_API_URL. Cannot connect to server.';
+      } else if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+        // Include details if available (e.g., validation errors)
+        if (error.response.data.details) {
+          errorMessage = `${errorMessage}: ${error.response.data.details}`;
+        }
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      throw new Error(errorMessage);
+    }
   };
 
   const logout = () => {

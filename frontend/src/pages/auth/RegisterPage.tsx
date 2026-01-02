@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './AuthPages.css';
@@ -25,8 +26,9 @@ const RegisterPage: React.FC = () => {
       await register(formData);
       // Redirect will be handled by ProtectedRoute based on role
       navigate('/owner/dashboard');
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+    } catch (err: any) {
+      // Display actual server error message
+      setError(err?.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +115,7 @@ const RegisterPage: React.FC = () => {
         </form>
         <div className="auth-page__footer">
           <p>
-            Already have an account? <a href="/login">Sign in</a>
+            Already have an account? <Link to="/login">Sign in</Link>
           </p>
         </div>
       </div>
@@ -122,4 +124,3 @@ const RegisterPage: React.FC = () => {
 };
 
 export default RegisterPage;
-

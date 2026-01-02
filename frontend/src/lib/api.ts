@@ -1,7 +1,34 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import type { ApiResponse, ApiError, ProjectCloseout, PunchListItem, ProjectReview } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+// Determine API base URL with proper fallback
+const getApiBaseUrl = (): string => {
+  // In development, default to localhost
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+  }
+  
+  // In production, require VITE_API_URL
+  const productionUrl = import.meta.env.VITE_API_URL;
+  
+  if (!productionUrl) {
+    const errorMsg = 'VITE_API_URL is not set in production. Please configure it in Vercel environment variables.';
+    console.error('❌ API Configuration Error:', errorMsg);
+    // Show error in console but don't crash - use /api as fallback
+    // This allows the app to load but API calls will fail with clear errors
+    return '/api';
+  }
+  
+  // Ensure URL ends with /api if not already present
+  return productionUrl.endsWith('/api') ? productionUrl : `${productionUrl}/api`;
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Log API configuration in development
+if (import.meta.env.DEV) {
+  console.log('🔧 API Base URL:', API_BASE_URL);
+}
 
 class ApiClient {
   private client: AxiosInstance;
@@ -42,11 +69,22 @@ class ApiClient {
             },
           });
           
+          // Check if it's a connection error to localhost in production
+          if (!import.meta.env.DEV && error.config?.baseURL?.includes('localhost')) {
+            const networkError = new Error(
+              'API not reachable—check VITE_API_URL. Cannot connect to localhost in production.'
+            ) as any;
+            networkError.isNetworkError = true;
+            networkError.isConfigError = true;
+            networkError.originalError = error;
+            return Promise.reject(networkError);
+          }
+          
           // Return a more descriptive error
           const networkError = new Error(
             error.code === 'ECONNREFUSED' 
-              ? 'Cannot connect to server. Please check if the backend is running.'
-              : error.message || 'Network error occurred'
+              ? 'API not reachable—check VITE_API_URL. Cannot connect to server.'
+              : 'API not reachable—check VITE_API_URL. Network error occurred.'
           ) as any;
           networkError.isNetworkError = true;
           networkError.originalError = error;
@@ -129,35 +167,28 @@ export const propertiesApi = {
   create: (data: unknown) => api.post<unknown>('/properties', data),
   update: (id: string, data: unknown) => api.put<unknown>(`/properties/${id}`, data),
   delete: (id: string) => api.delete<unknown>(`/properties/${id}`),
-  getProjects: (id: string) => api.get<unknown[]>(`/properties/${id}/projects`),
 };
 
 // Project Types endpoints
 export const projectTypesApi = {
-  list: (category?: string) => {
-    const url = category ? `/project-types?category=${category}` : '/project-types';
-    return api.get<unknown[]>(url);
-  },
-  assessComplexity: (data: {
+  list: () => api.get<unknown[]>('/project-types'),
+  get: (id: string) => api.get<unknown>(`/project-types/${id}`),
+  getMetadata: (type: string) => api.get<unknown>(`/project-types/${type}/metadata`),
+  getComplexityAssessment: (data: {
     projectType: string;
+    category: string;
     squareFootage?: number;
-    unitCount?: number;
-    customFactors?: string[];
-  }) => api.post<{
-    complexity: string;
-    confidence: number;
-    reasoning: string[];
-    suggestedReadinessItems: string[];
-    requiresArchitect: boolean;
-    requiresStructuralEngineer: boolean;
-    typicalDuration: string;
-  }>('/project-types/assess-complexity', data),
+    stories?: number;
+    budget?: number;
+    timeline?: string;
+    specialRequirements?: string[];
+  }) => api.post<unknown>('/project-types/complexity-assessment', data),
 };
 
 // Events endpoints
 export const eventsApi = {
-  create: (data: unknown) => api.post<unknown>('/events', data),
-  getByProject: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
+  list: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
+  create: (projectId: string, data: unknown) => api.post<unknown>(`/projects/${projectId}/events`, data),
 };
 
 // Projects endpoints
@@ -165,32 +196,32 @@ export const projectsApi = {
   list: () => api.get<unknown[]>('/projects'),
   get: (id: string) => api.get<unknown>(`/projects/${id}`),
   create: (data: unknown) => api.post<unknown>('/projects', data),
-  update: (id: string, data: unknown) => api.put<unknown>(`/projects/${id}`, data),
-  getEvents: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
-  getRecommendations: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/recommendations`),
-  getScores: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/scores`),
-  classifyType: (data: unknown) => api.post<unknown>('/projects/classify-type', data),
-  assessComplexity: (data: unknown) => api.post<unknown>('/projects/assess-complexity', data),
+  update: (id: string, data: unknown) => api.patch<unknown>(`/projects/${id}`, data),
+  delete: (id: string) => api.delete<unknown>(`/projects/${id}`),
 };
 
 // Recommendations endpoints
 export const recommendationsApi = {
-  accept: (id: string) => api.post<unknown>(`/recommendations/${id}/accept`),
-  label: (id: string, label: unknown) => api.post<unknown>(`/recommendations/${id}/label`, { label }),
+  get: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/recommendations`),
+  apply: (projectId: string, recommendationId: string) =>
+    api.post<unknown>(`/projects/${projectId}/recommendations/${recommendationId}/apply`),
 };
 
 // Design Versions endpoints
 export const designVersionsApi = {
   list: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/design-versions`),
-  get: (id: string) => api.get<unknown>(`/design-versions/${id}`),
-  create: (projectId: string, data: { versionName?: string; description?: string }) =>
+  get: (versionId: string) => api.get<unknown>(`/design-versions/${versionId}`),
+  create: (projectId: string, data: { name: string; description?: string; documents?: File[] }) =>
     api.post<unknown>(`/projects/${projectId}/design-versions`, data),
-  updateStatus: (id: string, status: string, approvalNotes?: string) =>
-    api.patch<unknown>(`/design-versions/${id}/status`, { status, approvalNotes }),
-  uploadDocument: async (versionId: string, file: File, documentType: string, description?: string) => {
+  updateStatus: (versionId: string, status: string, notes?: string) =>
+    api.patch<unknown>(`/design-versions/${versionId}/status`, { status, notes }),
+  approve: (versionId: string, notes?: string) =>
+    api.post<unknown>(`/design-versions/${versionId}/approve`, { notes }),
+  reject: (versionId: string, reason: string) =>
+    api.post<unknown>(`/design-versions/${versionId}/reject`, { reason }),
+  uploadDocument: async (versionId: string, file: File, description?: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('documentType', documentType);
     if (description) formData.append('description', description);
     
     const client = api.getClient();
@@ -304,45 +335,33 @@ export const closeoutApi = {
     );
     return response.data.data;
   },
-  getPunchList: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/punch-list`),
-  createPunchItem: (projectId: string, data: Partial<PunchListItem>) =>
-    api.post<unknown>(`/projects/${projectId}/punch-list`, data),
+  addPunchItem: (closeoutId: string, data: Partial<PunchListItem>) =>
+    api.post<unknown>(`/closeout/${closeoutId}/punch-items`, data),
   updatePunchItem: (itemId: string, data: Partial<PunchListItem>) =>
-    api.patch<unknown>(`/punch-list/${itemId}`, data),
-  uploadPunchImage: async (itemId: string, file: File, description?: string) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    if (description) formData.append('description', description);
-    
-    const client = api.getClient();
-    const response = await client.post<ApiResponse<unknown>>(
-      `/punch-list/${itemId}/images`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data.data;
-  },
+    api.patch<unknown>(`/punch-items/${itemId}`, data),
+  deletePunchItem: (itemId: string) => api.delete<unknown>(`/punch-items/${itemId}`),
+  completePunchItem: (itemId: string) =>
+    api.post<unknown>(`/punch-items/${itemId}/complete`),
 };
 
 // Reviews endpoints
 export const reviewsApi = {
-  checkEligibility: (projectId: string) => api.get<unknown>(`/projects/${projectId}/can-review`),
-  getReviews: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/reviews`),
-  submitReview: (projectId: string, data: Partial<ProjectReview>) =>
+  list: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/reviews`),
+  create: (projectId: string, data: Partial<ProjectReview>) =>
     api.post<unknown>(`/projects/${projectId}/reviews`, data),
-  submitResponse: (reviewId: string, responseText: string) =>
-    api.post<unknown>(`/reviews/${reviewId}/response`, { responseText }),
+  get: (reviewId: string) => api.get<unknown>(`/reviews/${reviewId}`),
+  update: (reviewId: string, data: Partial<ProjectReview>) =>
+    api.patch<unknown>(`/reviews/${reviewId}`, data),
+  respond: (reviewId: string, response: string) =>
+    api.post<unknown>(`/reviews/${reviewId}/respond`, { response }),
 };
 
 // Estimates endpoints
 export const estimatesApi = {
-  generateEstimate: (projectId: string) => api.post<unknown>(`/estimates/projects/${projectId}/generate-estimate`),
-  getEstimates: (projectId: string) => api.get<unknown[]>(`/estimates/projects/${projectId}/estimates`),
-  approveEstimate: (estimateId: string) => api.post<unknown>(`/estimates/estimates/${estimateId}/approve`),
+  get: (projectId: string) => api.get<unknown>(`/projects/${projectId}/estimate`),
+  generate: (projectId: string) => api.post<unknown>(`/projects/${projectId}/estimate/generate`),
+  update: (projectId: string, data: unknown) =>
+    api.patch<unknown>(`/projects/${projectId}/estimate`, data),
 };
 
 // PM endpoints
@@ -402,4 +421,3 @@ export const mlApi = {
   recommendations: (projectId: string) => api.get<unknown[]>(`/ml/projects/${projectId}/recommendations`),
   scores: (projectId: string) => api.get<unknown[]>(`/ml/projects/${projectId}/scores`),
 };
-

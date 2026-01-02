@@ -13,7 +13,9 @@ export default function PermitsListPage() {
   const loadPermits = async () => {
     try {
       const token = localStorage.getItem('token');
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+      const apiBaseUrl = import.meta.env.DEV 
+        ? (import.meta.env.VITE_API_URL || 'http://localhost:5001/api')
+        : (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api');
       const response = await fetch(`${apiBaseUrl}/permits`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
