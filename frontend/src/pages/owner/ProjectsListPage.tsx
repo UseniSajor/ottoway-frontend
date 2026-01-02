@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { projectsApi } from '../../lib/api';
-import ProjectTypeWizard from '../../components/projects/ProjectTypeWizard';
-import EmptyState from '../../components/EmptyState';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import ErrorMessage from '../../components/ErrorMessage';
-import type { Project, ProjectCategory, ProjectType, ProjectComplexity, ProjectStatus } from '../../types';
-import './OwnerPages.css';
-import './ProjectsListPage.css';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const ProjectsListPage: React.FC = () => {
+export default function ProjectsListPage() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showWizard, setShowWizard] = useState(false);
-  
-  // Filters
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState<ProjectCategory | ''>('');
-  const [filterType, setFilterType] = useState<ProjectType | ''>('');
-  const [filterStatus, setFilterStatus] = useState<ProjectStatus | ''>('');
-  const [filterComplexity, setFilterComplexity] = useState<ProjectComplexity | ''>('');
-  const [sortBy, setSortBy] = useState<'createdAt' | 'status' | 'name'>('createdAt');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     loadProjects();
@@ -32,284 +14,129 @@ const ProjectsListPage: React.FC = () => {
   const loadProjects = async () => {
     try {
       setLoading(true);
-      setError(null);
-      const response = await projectsApi.list();
-      const data = (response as any)?.data || response;
-      setProjects(Array.isArray(data) ? data : []);
+      const token = localStorage.getItem('token');
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+      const response = await fetch(`${apiBaseUrl}/projects`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(Array.isArray(data) ? data : (data?.data || []));
+      } else {
+        throw new Error('Failed to load projects');
+      }
     } catch (err: any) {
-      console.error('Failed to load projects:', err);
-      setError(err?.message || 'Failed to load projects');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredAndSortedProjects = React.useMemo(() => {
-    let filtered = projects.filter((project) => {
-      const matchesSearch = !searchTerm || 
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesCategory = !filterCategory || project.category === filterCategory;
-      const matchesType = !filterType || project.projectType === filterType;
-      const matchesStatus = !filterStatus || project.status === filterStatus;
-      const matchesComplexity = !filterComplexity || project.complexity === filterComplexity;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
-      return matchesSearch && matchesCategory && matchesType && matchesStatus && matchesComplexity;
-    });
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <p className="text-red-800">{error}</p>
+          <button 
+            onClick={loadProjects}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-    // Sort
-    filtered.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
-
-      switch (sortBy) {
-        case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
-        case 'status':
-          aValue = a.status || 'PLANNING';
-          bValue = b.status || 'PLANNING';
-          break;
-        case 'createdAt':
-        default:
-          aValue = new Date(a.createdAt).getTime();
-          bValue = new Date(b.createdAt).getTime();
-          break;
-      }
-
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-
-    return filtered;
-  }, [projects, searchTerm, filterCategory, filterType, filterStatus, filterComplexity, sortBy, sortOrder]);
-
-  const categories: ProjectCategory[] = ['RESIDENTIAL', 'COMMERCIAL', 'INDUSTRIAL', 'INSTITUTIONAL', 'MIXED_USE'];
-  const complexities: ProjectComplexity[] = ['SIMPLE', 'MODERATE', 'COMPLEX', 'MAJOR'];
-  const statuses: ProjectStatus[] = [
-    'PLANNING', 'DESIGN', 'READINESS', 'CONTRACT_NEGOTIATION',
-    'PERMIT_SUBMISSION', 'PERMITTED', 'CONSTRUCTION', 'CLOSEOUT', 'COMPLETED', 'ON_HOLD', 'CANCELLED'
-  ];
-
-  const formatLabel = (value: string) => {
-    return value.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
-  const getStatusColor = (status: ProjectStatus) => {
-    const colors: Record<string, string> = {
-      PLANNING: '#999',
-      DESIGN: '#0066cc',
-      READINESS: '#ff9800',
-      CONTRACT_NEGOTIATION: '#9c27b0',
-      PERMIT_SUBMISSION: '#2196f3',
-      PERMITTED: '#4caf50',
-      CONSTRUCTION: '#ff5722',
-      CLOSEOUT: '#607d8b',
-      COMPLETED: '#4caf50',
-      ON_HOLD: '#ff9800',
-      CANCELLED: '#f44336',
-    };
-    return colors[status] || '#999';
-  };
-
-  const getComplexityColor = (complexity: ProjectComplexity) => {
-    const colors: Record<string, string> = {
-      SIMPLE: '#4caf50',
-      MODERATE: '#ff9800',
-      COMPLEX: '#ff5722',
-      MAJOR: '#f44336',
-    };
-    return colors[complexity] || '#999';
-  };
+  if (projects.length === 0) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Projects</h1>
+        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+          <svg className="w-24 h-24 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Projects Yet</h2>
+          <p className="text-gray-600 mb-6">Create your first project to start managing your construction work</p>
+          <button
+            onClick={() => navigate('/owner/projects/new')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          >
+            + Create Your First Project
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="owner-page">
-      <div className="owner-page__header">
-        <h2>Projects</h2>
-        <button
-          onClick={() => setShowWizard(true)}
-          className="owner-page__button"
-        >
-          + New Project
-        </button>
-      </div>
-
-      {loading && <LoadingSpinner />}
-      {error && <ErrorMessage message={error} onRetry={loadProjects} />}
-      
-      {!loading && !error && (
-        <>
-          {/* Filters and Search */}
-          <div className="projects-list__filters">
-        <div className="projects-list__search">
-          <input
-            type="text"
-            placeholder="Search projects by name or description..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="projects-list__search-input"
-          />
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+          <button
+            onClick={() => navigate('/owner/projects/new')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Project
+          </button>
         </div>
 
-        <div className="projects-list__filter-group">
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value as ProjectCategory | '')}
-            className="projects-list__filter-select"
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {formatLabel(cat)}
-              </option>
-            ))}
-          </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              onClick={() => navigate(`/owner/projects/${project.id}`)}
+              className="bg-white p-6 rounded-xl shadow-lg cursor-pointer hover:shadow-2xl transition transform hover:scale-105"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-900">{project.name}</h3>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  project.status === 'DESIGN' ? 'bg-blue-100 text-blue-800' :
+                  project.status === 'CONSTRUCTION' ? 'bg-orange-100 text-orange-800' :
+                  project.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {project.status}
+                </span>
+              </div>
 
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as ProjectStatus | '')}
-            className="projects-list__filter-select"
-          >
-            <option value="">All Statuses</option>
-            {statuses.map((status) => (
-              <option key={status} value={status}>
-                {formatLabel(status)}
-              </option>
-            ))}
-          </select>
+              <p className="text-gray-600 mb-4 line-clamp-2">
+                {project.description || 'No description provided'}
+              </p>
 
-          <select
-            value={filterComplexity}
-            onChange={(e) => setFilterComplexity(e.target.value as ProjectComplexity | '')}
-            className="projects-list__filter-select"
-          >
-            <option value="">All Complexities</option>
-            {complexities.map((comp) => (
-              <option key={comp} value={comp}>
-                {formatLabel(comp)}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={`${sortBy}-${sortOrder}`}
-            onChange={(e) => {
-              const [by, order] = e.target.value.split('-');
-              setSortBy(by as any);
-              setSortOrder(order as any);
-            }}
-            className="projects-list__filter-select"
-          >
-            <option value="createdAt-desc">Newest First</option>
-            <option value="createdAt-asc">Oldest First</option>
-            <option value="name-asc">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="status-asc">Status (A-Z)</option>
-            <option value="status-desc">Status (Z-A)</option>
-          </select>
+              <div className="flex items-center justify-between text-sm text-gray-500">
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  {project.projectType}
+                </span>
+                <span className="flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {new Date(project.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-          {/* Results Count */}
-          {projects.length > 0 && (
-            <div className="projects-list__results">
-              Showing {filteredAndSortedProjects.length} of {projects.length} projects
-            </div>
-          )}
-
-          {/* Projects Grid */}
-          {projects.length === 0 ? (
-            <EmptyState
-              title="No Projects Yet"
-              description="Get started by creating your first project"
-              actionLabel="Create Project"
-              onAction={() => setShowWizard(true)}
-            />
-          ) : filteredAndSortedProjects.length === 0 ? (
-            <EmptyState
-              title="No Projects Match Your Filters"
-              description="Try adjusting your search or filter criteria"
-              actionLabel="Clear Filters"
-              onAction={() => {
-                setSearchTerm('');
-                setFilterCategory('');
-                setFilterType('');
-                setFilterStatus('');
-                setFilterComplexity('');
-              }}
-            />
-          ) : (
-            <div className="projects-list__grid">
-              {filteredAndSortedProjects.map((project) => (
-                <Link
-                  key={project.id}
-                  to={`/owner/projects/${project.id}`}
-                  className="projects-list__card"
-                >
-                  <div className="projects-list__card-header">
-                    <h3>{project.name}</h3>
-                    <div className="projects-list__badges">
-                      <span
-                        className="projects-list__badge projects-list__badge--category"
-                        style={{ backgroundColor: '#f0f7ff', color: '#0066cc' }}
-                      >
-                        {formatLabel(project.category)}
-                      </span>
-                      <span
-                        className="projects-list__badge projects-list__badge--complexity"
-                        style={{ backgroundColor: getComplexityColor(project.complexity) + '20', color: getComplexityColor(project.complexity) }}
-                      >
-                        {formatLabel(project.complexity)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="projects-list__card-body">
-                    <div className="projects-list__card-meta">
-                      <span className="projects-list__meta-label">Type:</span>
-                      <span>{formatLabel(project.projectType)}</span>
-                    </div>
-                    {project.description && (
-                      <div className="projects-list__card-description">
-                        {project.description.length > 100
-                          ? `${project.description.substring(0, 100)}...`
-                          : project.description}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="projects-list__card-footer">
-                    <span
-                      className="projects-list__status"
-                      style={{ backgroundColor: getStatusColor(project.status || 'PLANNING') }}
-                    >
-                      {formatLabel(project.status || 'PLANNING')}
-                    </span>
-                    <span className="projects-list__date">
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-
-      {showWizard && (
-        <div className="dashboard-page__modal-overlay" onClick={() => setShowWizard(false)}>
-          <div className="dashboard-page__modal-content" onClick={(e) => e.stopPropagation()}>
-            <ProjectTypeWizard onClose={() => setShowWizard(false)} />
-          </div>
-        </div>
-      )}
     </div>
   );
-};
-
-export default ProjectsListPage;
+}

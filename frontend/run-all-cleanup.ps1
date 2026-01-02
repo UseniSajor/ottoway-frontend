@@ -33,3 +33,4 @@ Write-Host "3. Commit: git add . && git commit -m 'Remove demo data, activate fe
 Write-Host "4. Deploy: git push (Vercel will auto-deploy)" -ForegroundColor Gray
 Write-Host ""
 
+

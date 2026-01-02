@@ -1,8 +1,8 @@
 import React from 'react';
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams, Navigate } from 'react-router-dom';
 import { AppShell } from '../../components/layout/AppShell';
 import AutoEstimate from '../../components/AutoEstimate';
-import OwnerDashboard from '../../pages/dashboard/OwnerDashboard';
+import OwnerDashboard from '../../pages/owner/OwnerDashboard';
 import ProjectsListPage from '../../pages/owner/ProjectsListPage';
 import ProjectDetailsPage from '../../pages/owner/ProjectDetailsPage';
 import PropertiesPage from '../../pages/owner/PropertiesPage';
@@ -44,6 +44,7 @@ const OwnerPortal: React.FC = () => {
   return (
     <AppShell portalName="Owner Portal" navItems={navItems}>
       <Routes>
+        <Route index element={<Navigate to="/owner/dashboard" replace />} />
         <Route path="dashboard" element={<OwnerDashboard />} />
         <Route path="projects" element={<ProjectsListPage />} />
         <Route path="projects/:id" element={<ProjectDetailsPage />}>

@@ -144,3 +144,4 @@ const WarrantyInfoPanel: React.FC<WarrantyInfoPanelProps> = ({ closeout, onUpdat
 
 export default WarrantyInfoPanel;
 
+

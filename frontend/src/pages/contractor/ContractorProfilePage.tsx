@@ -69,3 +69,4 @@ const ContractorProfilePage: React.FC = () => {
 
 export default ContractorProfilePage;
 
+

@@ -69,6 +69,9 @@ function App() {
             
             {/* Default redirect */}
             <Route path="/" element={<Navigate to="/login" replace />} />
+            
+            {/* Catch all - redirect to login */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </NotificationProvider>
       </AuthProvider>

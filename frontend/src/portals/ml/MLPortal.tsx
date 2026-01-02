@@ -1,7 +1,7 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from '../../components/layout/AppShell';
-import MLDashboard from '../../pages/dashboard/MLDashboard';
+import MLDashboard from '../../pages/ml/MLDashboard';
 import EventMonitorPage from '../../pages/ml/EventMonitorPage';
 import AutomationRulesPage from '../../pages/ml/AutomationRulesPage';
 import ModelScoresPage from '../../pages/ml/ModelScoresPage';
@@ -23,6 +23,7 @@ const MLPortal: React.FC = () => {
   return (
     <AppShell portalName="ML & Automation Portal" navItems={navItems}>
       <Routes>
+        <Route index element={<Navigate to="/ml/dashboard" replace />} />
         <Route path="dashboard" element={<MLDashboard />} />
         <Route path="events" element={<EventMonitorPage />} />
         <Route path="automation" element={<AutomationRulesPage />} />

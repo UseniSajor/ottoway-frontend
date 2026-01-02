@@ -56,3 +56,4 @@ Write-Host "1. Review changes: git diff" -ForegroundColor Gray
 Write-Host "2. Test locally: npm run dev" -ForegroundColor Gray
 Write-Host "3. Commit: git add . && git commit -m 'Remove demo data'" -ForegroundColor Gray
 
+

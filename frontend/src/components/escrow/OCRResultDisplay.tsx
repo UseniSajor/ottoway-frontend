@@ -74,3 +74,4 @@ const OCRResultDisplay: React.FC<OCRResultDisplayProps> = ({ ocrResult }) => {
 
 export default OCRResultDisplay;
 
+

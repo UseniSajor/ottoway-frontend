@@ -35,3 +35,4 @@ const RatingInput: React.FC<RatingInputProps> = ({ label, value, onChange }) => 
 
 export default RatingInput;
 
+

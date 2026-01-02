@@ -196,3 +196,4 @@ console.log('1. Review changes: git diff');
 console.log('2. Test locally: npm run dev');
 console.log('3. Commit: git add . && git commit -m "Connect pages to API"');
 
+
