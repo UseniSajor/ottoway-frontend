@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectsApi, recommendationsApi } from '../../lib/api';
+import { recommendationsApi } from '../../lib/api';
 import './MLPages.css';
 
 interface Recommendation {
