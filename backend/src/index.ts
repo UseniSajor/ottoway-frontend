@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { createServer } from "http";
 
 import { env } from "./config/env";
 
@@ -35,7 +34,13 @@ import { designRouter } from "./routes/design";
 import { estimatesRouter } from "./routes/estimates";
 
 const app = express();
-const PORT = env.PORT;
+// Convert PORT to number and ensure it's valid
+const PORT = Number(process.env.PORT) || 5000;
+
+// Health check - registered FIRST to respond immediately without any middleware
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 // Trust proxy (for Railway/Vercel)
 app.set("trust proxy", 1);
@@ -47,24 +52,46 @@ app.use(rateLimit);
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.) in development
-      if (!origin && env.NODE_ENV === "development") {
+      // Development: allow localhost origins and requests with no origin (mobile apps, Postman, etc.)
+      if (env.NODE_ENV !== "production") {
+        if (!origin) {
+          return callback(null, true);
+        }
+        const localhostOrigins = [
+          "http://localhost:3000",
+          "http://localhost:3001",
+          "http://localhost:5173",
+        ];
+        if (localhostOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        // Development: allow all origins for flexibility
         return callback(null, true);
       }
 
-      // In production, only allow configured origin
-      if (env.NODE_ENV === "production") {
-        const allowedOrigins = [env.CORS_ORIGIN];
-        if (origin && allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          logger.warn("CORS blocked request", { origin, allowed: env.CORS_ORIGIN });
-          callback(new AppError(403, "Not allowed by CORS", "CORS_ERROR"));
-        }
-      } else {
-        // Development: allow localhost
-        callback(null, true);
+      // Production: allow configured origin or vercel.app domains
+      if (!origin) {
+        logger.warn("CORS blocked request: no origin in production");
+        return callback(new AppError(403, "Not allowed by CORS", "CORS_ERROR"));
       }
+
+      // Check if origin matches CORS_ORIGIN if set
+      if (env.CORS_ORIGIN && origin === env.CORS_ORIGIN) {
+        return callback(null, true);
+      }
+
+      // Check if origin matches vercel.app pattern
+      if (/\.vercel\.app$/.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Block all other origins
+      logger.warn("CORS blocked request", { 
+        origin, 
+        allowed: env.CORS_ORIGIN || "*.vercel.app",
+        nodeEnv: env.NODE_ENV 
+      });
+      callback(new AppError(403, "Not allowed by CORS", "CORS_ERROR"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -78,11 +105,6 @@ app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 // Body parsing
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
 
 // API Routes
 app.use("/api/stripe", stripeRouter);
@@ -119,66 +141,31 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-/**
- * Start server with graceful port conflict handling
- * If the configured port is in use, tries the next available port
- */
-function startServer() {
-  const requestedPort = parseInt(PORT, 10);
-  const maxPortAttempts = 10; // Try up to 10 ports
-  let attempts = 0;
+// Log PORT configuration on startup
+console.log('🚀 Starting server...');
+console.log(`   process.env.PORT: ${process.env.PORT || '(not set)'}`);
+console.log(`   Final PORT: ${PORT}`);
 
-  function tryListen(port: number) {
-    const server = createServer(app);
+// Start server - bind to 0.0.0.0 to accept connections from all interfaces (required for Railway/containers)
+const server = app.listen(PORT, "0.0.0.0", () => {
+  logger.info("Server started", {
+    port: PORT,
+    nodeEnv: env.NODE_ENV,
+    corsOrigin: env.CORS_ORIGIN || "(not set - will allow vercel.app origins)",
+  });
 
-    server.on("error", (error: NodeJS.ErrnoException) => {
-      if (error.code === "EADDRINUSE") {
-        attempts++;
-        if (attempts >= maxPortAttempts) {
-          logger.error(
-            `Failed to find available port after ${maxPortAttempts} attempts. Last tried: ${port}`
-          );
-          process.exit(1);
-        }
-        logger.warn(`Port ${port} is already in use, trying port ${port + 1}...`);
-        server.close();
-        // Try next port
-        tryListen(port + 1);
-      } else {
-        // Different error, log and exit
-        logger.error("Failed to start server", { 
-          error: error.message, 
-          code: error.code,
-          port: port
-        });
-        process.exit(1);
-      }
-    });
+  // Start scheduled jobs after server starts (non-blocking)
+  startScheduledJobs();
+});
 
-    server.listen(port, () => {
-      // Successfully bound to port
-      if (port !== requestedPort) {
-        logger.warn(
-          `Port ${requestedPort} was in use. Server started on port ${port} instead.`
-        );
-      }
-
-      logger.info("Server started", {
-        port: port,
-        requestedPort: requestedPort,
-        nodeEnv: env.NODE_ENV,
-        corsOrigin: env.CORS_ORIGIN,
-      });
-
-      // Start scheduled jobs after server starts
-      startScheduledJobs();
-    });
-  }
-
-  tryListen(requestedPort);
-}
-
-startServer();
+server.on("error", (error: NodeJS.ErrnoException) => {
+  logger.error("Failed to start server", {
+    error: error.message,
+    code: error.code,
+    port: PORT,
+  });
+  process.exit(1);
+});
 
 // Cleanup on exit
 process.on("SIGTERM", () => {

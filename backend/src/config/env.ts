@@ -8,7 +8,7 @@ interface EnvConfig {
   DATABASE_URL: string;
   JWT_SECRET: string;
   PORT: string;
-  CORS_ORIGIN: string;
+  CORS_ORIGIN?: string;
   NODE_ENV: 'development' | 'production' | 'test';
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
@@ -35,11 +35,7 @@ function validateEnv(): EnvConfig {
     errors.push('JWT_SECRET must be at least 32 characters long');
   }
 
-  if (!process.env.CORS_ORIGIN) {
-    errors.push('CORS_ORIGIN is required');
-  }
-
-  // Validate CORS_ORIGIN format
+  // Validate CORS_ORIGIN format if provided (optional in production - defaults to vercel.app pattern)
   if (process.env.CORS_ORIGIN) {
     try {
       new URL(process.env.CORS_ORIGIN);
@@ -75,7 +71,7 @@ function validateEnv(): EnvConfig {
     DATABASE_URL: process.env.DATABASE_URL!,
     JWT_SECRET: process.env.JWT_SECRET!,
     PORT: process.env.PORT || '5000',
-    CORS_ORIGIN: process.env.CORS_ORIGIN!,
+    CORS_ORIGIN: process.env.CORS_ORIGIN,
     NODE_ENV: nodeEnv,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
@@ -88,7 +84,7 @@ function validateEnv(): EnvConfig {
 
   console.log('✅ Environment validation passed');
   console.log(`   NODE_ENV: ${config.NODE_ENV}`);
-  console.log(`   CORS_ORIGIN: ${config.CORS_ORIGIN}`);
+  console.log(`   CORS_ORIGIN: ${config.CORS_ORIGIN || '(not set - will allow vercel.app origins in production)'}`);
   console.log(`   PORT: ${config.PORT}`);
 
   return config;
