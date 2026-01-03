@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectsApi } from '../../lib/api';
+import { eventsApi } from '../../lib/api';
 import './MLPages.css';
 
 interface ProjectEvent {
@@ -19,7 +19,7 @@ const EventMonitorPage: React.FC = () => {
     const loadEvents = async () => {
       if (selectedProject) {
         try {
-          const data = await projectsApi.getEvents(selectedProject);
+          const data = await eventsApi.getEvents(selectedProject);
           setEvents(data as ProjectEvent[]);
         } catch (error) {
           console.error('Failed to load events:', error);

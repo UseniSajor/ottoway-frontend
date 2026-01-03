@@ -33,7 +33,7 @@ const ReviewsPage: React.FC = () => {
     try {
       // Eligibility check not yet implemented in API
       // For now, set default eligibility
-      setEligibility({ eligible: true, reason: '' });
+      setEligibility({ allowed: true, reasons: [] });
     } catch (err: any) {
       console.error('Failed to check eligibility:', err);
     }
@@ -45,7 +45,8 @@ const ReviewsPage: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await reviewsApi.list(projectId);
-      setReviews(Array.isArray(response) ? response : []);
+      // reviewsApi.list returns Promise<ProjectReview[]>, so response is already typed
+      setReviews(response);
     } catch (err: any) {
       console.error('Failed to load reviews:', err);
       setError(err?.response?.data?.message || 'Failed to load reviews');

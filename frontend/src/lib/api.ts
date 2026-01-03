@@ -171,7 +171,10 @@ export const propertiesApi = {
 
 // Project Types endpoints
 export const projectTypesApi = {
-  list: () => api.get<unknown[]>('/project-types'),
+  list: (category?: string) => {
+    const url = category ? `/project-types?category=${category}` : '/project-types';
+    return api.get<unknown[]>(url);
+  },
   get: (id: string) => api.get<unknown>(`/project-types/${id}`),
   getMetadata: (type: string) => api.get<unknown>(`/project-types/${type}/metadata`),
   getComplexityAssessment: (data: {
@@ -183,12 +186,33 @@ export const projectTypesApi = {
     timeline?: string;
     specialRequirements?: string[];
   }) => api.post<unknown>('/project-types/complexity-assessment', data),
+  // Alias for backward compatibility
+  assessComplexity: (data: {
+    projectType: string;
+    category?: string;
+    squareFootage?: number;
+    unitCount?: number;
+    stories?: number;
+    budget?: number;
+    timeline?: string;
+    specialRequirements?: string[];
+  }) => api.post<unknown>('/project-types/complexity-assessment', {
+    projectType: data.projectType,
+    category: data.category || 'RESIDENTIAL',
+    squareFootage: data.squareFootage,
+    stories: data.stories,
+    budget: data.budget,
+    timeline: data.timeline,
+    specialRequirements: data.specialRequirements,
+  }),
 };
 
 // Events endpoints
 export const eventsApi = {
   list: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
   create: (projectId: string, data: unknown) => api.post<unknown>(`/projects/${projectId}/events`, data),
+  // Alias for backward compatibility
+  getEvents: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
 };
 
 // Projects endpoints
@@ -198,6 +222,10 @@ export const projectsApi = {
   create: (data: unknown) => api.post<unknown>('/projects', data),
   update: (id: string, data: unknown) => api.patch<unknown>(`/projects/${id}`, data),
   delete: (id: string) => api.delete<unknown>(`/projects/${id}`),
+  // Aliases for backward compatibility
+  getRecommendations: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/recommendations`),
+  getScores: (projectId: string) => api.get<unknown[]>(`/ml/projects/${projectId}/scores`),
+  getEvents: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/events`),
 };
 
 // Recommendations endpoints
@@ -205,6 +233,9 @@ export const recommendationsApi = {
   get: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/recommendations`),
   apply: (projectId: string, recommendationId: string) =>
     api.post<unknown>(`/projects/${projectId}/recommendations/${recommendationId}/apply`),
+  // Label endpoint for feedback labeling
+  label: (recommendationId: string, data: { label: string; notes?: string }) =>
+    api.post<unknown>(`/recommendations/${recommendationId}/label`, { label: data.label, ...(data.notes && { notes: data.notes }) }),
 };
 
 // Design Versions endpoints
@@ -219,9 +250,10 @@ export const designVersionsApi = {
     api.post<unknown>(`/design-versions/${versionId}/approve`, { notes }),
   reject: (versionId: string, reason: string) =>
     api.post<unknown>(`/design-versions/${versionId}/reject`, { reason }),
-  uploadDocument: async (versionId: string, file: File, description?: string) => {
+  uploadDocument: async (versionId: string, file: File, documentType?: string, description?: string) => {
     const formData = new FormData();
     formData.append('file', file);
+    if (documentType) formData.append('documentType', documentType);
     if (description) formData.append('description', description);
     
     const client = api.getClient();
@@ -337,6 +369,9 @@ export const closeoutApi = {
   },
   addPunchItem: (closeoutId: string, data: Partial<PunchListItem>) =>
     api.post<unknown>(`/closeout/${closeoutId}/punch-items`, data),
+  // Alias for backward compatibility
+  createPunchItem: (closeoutId: string, data: Partial<PunchListItem>) =>
+    api.post<unknown>(`/closeout/${closeoutId}/punch-items`, data),
   updatePunchItem: (itemId: string, data: Partial<PunchListItem>) =>
     api.patch<unknown>(`/punch-items/${itemId}`, data),
   deletePunchItem: (itemId: string) => api.delete<unknown>(`/punch-items/${itemId}`),
@@ -346,14 +381,17 @@ export const closeoutApi = {
 
 // Reviews endpoints
 export const reviewsApi = {
-  list: (projectId: string) => api.get<unknown[]>(`/projects/${projectId}/reviews`),
+  list: (projectId: string) => api.get<ProjectReview[]>(`/projects/${projectId}/reviews`),
   create: (projectId: string, data: Partial<ProjectReview>) =>
-    api.post<unknown>(`/projects/${projectId}/reviews`, data),
-  get: (reviewId: string) => api.get<unknown>(`/reviews/${reviewId}`),
+    api.post<ProjectReview>(`/projects/${projectId}/reviews`, data),
+  get: (reviewId: string) => api.get<ProjectReview>(`/reviews/${reviewId}`),
   update: (reviewId: string, data: Partial<ProjectReview>) =>
-    api.patch<unknown>(`/reviews/${reviewId}`, data),
+    api.patch<ProjectReview>(`/reviews/${reviewId}`, data),
   respond: (reviewId: string, response: string) =>
     api.post<unknown>(`/reviews/${reviewId}/respond`, { response }),
+  // Alias for backward compatibility
+  submitReview: (projectId: string, data: Partial<ProjectReview>) =>
+    api.post<ProjectReview>(`/projects/${projectId}/reviews`, data),
 };
 
 // Estimates endpoints

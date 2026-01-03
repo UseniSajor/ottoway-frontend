@@ -61,12 +61,12 @@ const ProjectTypeWizard: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     if (selectedCategory) {
       setIsLoading(true);
       projectTypesApi.list(selectedCategory)
-        .then((response) => {
+        .then((response: any) => {
           const data = (response as any)?.data || response;
           setProjectTypes(data as ProjectTypeMetadata[]);
           setIsLoading(false);
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.error('Failed to load project types:', err);
           setError('Failed to load project types');
           setIsLoading(false);
@@ -89,18 +89,19 @@ const ProjectTypeWizard: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     if (selectedType && (projectData.squareFootage || projectData.unitCount)) {
       projectTypesApi.assessComplexity({
         projectType: selectedType.type,
+        category: selectedCategory || 'RESIDENTIAL',
         squareFootage: projectData.squareFootage ? parseInt(projectData.squareFootage, 10) : undefined,
         unitCount: projectData.unitCount ? parseInt(projectData.unitCount, 10) : undefined,
       })
-        .then((response) => {
+        .then((response: any) => {
           const assessment = (response as any)?.data || response;
           setComplexityAssessment(assessment);
         })
-        .catch((err) => {
+        .catch((err: any) => {
           console.error('Failed to assess complexity:', err);
         });
     }
-  }, [selectedType, projectData.squareFootage, projectData.unitCount]);
+  }, [selectedType, selectedCategory, projectData.squareFootage, projectData.unitCount]);
 
   const handleCategorySelect = (category: ProjectCategory) => {
     setSelectedCategory(category);
@@ -343,6 +344,7 @@ const ProjectTypeWizard: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                     try {
                       const response = await projectTypesApi.assessComplexity({
                         projectType: selectedType.type,
+                        category: selectedCategory || 'RESIDENTIAL',
                         squareFootage: projectData.squareFootage ? parseInt(projectData.squareFootage, 10) : undefined,
                         unitCount: projectData.unitCount ? parseInt(projectData.unitCount, 10) : undefined,
                       });
